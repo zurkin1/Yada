@@ -1,0 +1,5 @@
+include README.md
+include requirements
+include LICENSE
+recursive-include data *.*
+recursive-include yada *.txt *.csv
