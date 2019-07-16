@@ -1,15 +1,19 @@
 import numpy as np
 import pandas as pd
 import pymc3 as pm
+import logging
 
 #This function calculates a deconvolution algorithm using Bayes algorithm.
 def dsection(params):
+    logger = logging.getLogger()
+    logger.propagate = False
+    logger.disabled = True
     #Use only differential meaningful genes.
     gene_list = pd.concat([params['gene_list_df'].iloc[:, i] for i in range(len(params['gene_list_df'].columns))]).values
     gene_list = [x for x in gene_list if str(x) != 'nan']
     mix = params['mix'].loc[gene_list]
     pure = params['pure'].loc[gene_list]
-    p_start = np.ones([len(pure.columns), len(mix.columns)])
+    p_start = np.ones([len(mix.columns), len(pure.columns)])
     # Variance calculation
     joined_data = pd.concat([pure, mix], axis=1)
     joined_std = pd.DataFrame([joined_data.std(axis=1)] * len(pure.columns)).T
@@ -20,7 +24,7 @@ def dsection(params):
         gamma = pm.Gamma('gamma', alpha=1, beta=1)
         ϵ = pm.Deterministic('ϵ', gamma + joined_std.T)
         pure_ = pm.Normal('pure_', mu=pure.T, shape=pure.T.shape, sd=ϵ)
-        p_ = pm.Dirichlet('p_', a=p_start.T, shape=p_start.T.shape)
+        p_ = pm.Dirichlet('p_', a=p_start, shape=p_start.shape)
 
         # Likelihood (sampling distribution) of observations
         gamma2 = pm.Gamma('gamma2', alpha=1, beta=1)
@@ -29,6 +33,8 @@ def dsection(params):
 
         start = pm.find_MAP(model=basic_model)
         step = pm.Metropolis()
-        trace = pm.sample(1000, tune=50, step=step, cores=1, start=start, chains=4)
+        trace = pm.sample(1000, tune=50, step=step, cores=1, start=start, chains=4, progressbar=False)
 
+    logger.propagate = True
+    logger.disabled = False
     return(np.round(trace['p_'].mean(axis=0), 2).T)

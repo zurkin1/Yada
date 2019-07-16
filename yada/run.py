@@ -1,11 +1,20 @@
 import numpy as np
 import pandas as pd
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.preprocessing import minmax_scale
 from scipy.optimize import nnls
 from tslearn import metrics
 from diffexp import gene_diff
 from dataLoader import load_data
 from dsection import dsection
+from cibersort import cibersort
+import logging
+import warnings
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+logger = logging.getLogger("pymc3")
+logger.propagate = False
+logger.setLevel(logging.ERROR)
 
 pure = pd.DataFrame()
 mix = pd.DataFrame()
@@ -16,7 +25,7 @@ mixtures_sum = []
 other_res = 100
 num_mixes = 0
 num_cells = 0
-test_cases = ['RatBrain', 'Abbas', 'TIMER', 'DSA', 'DeconRNASeq', 'BreastBlood', '10x', 'EPIC', 'CIBERSORT', 'PertU']
+test_cases = ['BreastBlood', 'Abbas', 'RatBrain', 'TIMER', 'DSA', 'DeconRNASeq', '10x', 'EPIC', 'CIBERSORT', 'PertU']
 
 #This function calculate a deconvolution algorithm.
 def deconv(useSimpleDist):
@@ -51,8 +60,8 @@ def deconv(useSimpleDist):
                 for gene in cell_genelist:
                     # Subtract the average of other cells on this gene to compensate for over estimation of ratio.
                     dist += mixtures_sum[k] * \
-                            ((column[gene] + 0.000001)) / (max_column[gene] + 0.000001) * \
-                            ((factor_list[cell_type][j] + 0.000001) / ((factor_list[cell_type].sum() + 0.000001)))
+                            ((column[gene] + 0.000001) / (max_column[gene] + 0.000001)) * \
+                            ((factor_list[cell_type][j] + 0.000001) / (factor_list[cell_type].sum() + 0.000001))
                     j += 1
 
             cell_vals.append(dist)
@@ -81,7 +90,7 @@ def calc_scores(a_prop, b_prop, method_i):
     if (other_res < 5):
       dist_from_mix = np.round(np.square(mix - np.dot(pure,b_prop.T)).values.mean(), 2)
     print(f'Method {method_i}, distance from real is: {dist_from_real_value}, distance from mix {dist_from_mix}')
-    return dist_from_real_value, dist_from_mix
+    return dist_from_mix
 
 if __name__ == '__main__':
     for test in test_cases:
@@ -89,24 +98,26 @@ if __name__ == '__main__':
         num_mixes = len(mix.columns)
         num_cells = len(pure.columns)
         print(f'\nTest case: {test}, num_cells: {num_cells}, num_mixes: {num_mixes}')
-        result=[0,0,0]
-        dist=[0,0,0]
         if(len(mixtures_sum) == 0):
             mixtures_sum=[1 for i in range(num_mixes)]
         gene_list_df, factor_list = gene_diff(pure)
-        other_dist, _ = calc_scores(real_weight, other_result, 'CIBERSORT')
-        other_res = np.round(np.sum(np.dot(np.abs(mix - np.dot(pure,other_result.T)), mixtures_sum)/mix.size), 2)
-
-        for method in [[0, deconv, True, 10],
+        _ = calc_scores(real_weight, other_result, 'CIBERSORT')
+        dist_from_mix = 1999
+        methods = [ #[index, method, method parameters, number of ensembles]
+                       [0, deconv, True, 10],
                        [1, deconv, False, 400],
-                       [2, dsection, {'mix':mix, 'pure':pure, 'gene_list_df':gene_list_df}, 1]]: #[index, method, method parameters, number of ensembles]
+                       [2, dsection, {'mix':mix, 'pure':pure, 'gene_list_df':gene_list_df}, 1],
+                       [3, cibersort, {'mix': mix, 'pure': pure}, 1]
+                       ]
+
+        for method in methods:
             ens_estimate_wt = np.zeros((num_cells, num_mixes))
             for ens_i in range(method[3]):
                 estimate_wt = method[1](method[2])
                 ens_estimate_wt += estimate_wt
             ens_estimate_wt /= method[3]
-            dist[method[0]], result[method[0]] = calc_scores(real_weight, ens_estimate_wt.T, method[0] + 1)
-
-        ind = np.argmin([result[0], result[1], result[2]])
-        print(f'Best result: method {ind + 1}.')
-        assert dist[ind] <= other_dist, "Failed test " + test
+            dist_from_mix_temp = calc_scores(real_weight, ens_estimate_wt.T, method[0] + 1)
+            if (dist_from_mix_temp < dist_from_mix):
+                dist_from_mix = dist_from_mix_temp
+                selected = method[0]
+                print(f'---> New best method: {method[0]+1}')

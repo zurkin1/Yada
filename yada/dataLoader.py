@@ -111,3 +111,22 @@ def load_data(dataset_name):
     pure = pure.reindex(both_genes)  # Drop genes that don't appear in mix.
     mix = mix.reindex(both_genes)
     return mix, pure, real_weight, other_result, mixtures_sum
+
+"""
+#xCell
+pure = pd.read_csv('yada/data/Challenge/xcell.csv', header=None, index_col=0).T
+cd4memoryt = pd.concat([pure.iloc[:,i] for i in range(0,1)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+cd4naivet = pd.concat([pure.iloc[:,i] for i in range(1,3)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+cd8naivet = pd.concat([pure.iloc[:,i] for i in range(3,6)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+endothelial = pd.concat([pure.iloc[:,i] for i in range(6,12)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+fibroblast = pd.concat([pure.iloc[:,i] for i in range(12,13)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+macrophages = pd.concat([pure.iloc[:,i] for i in range(13,14)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+memoryb = pd.concat([pure.iloc[:,i] for i in range(14,15)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+monocytes = pd.concat([pure.iloc[:,i] for i in range(15,16)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+naiveb = pd.concat([pure.iloc[:,i] for i in range(16,21)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+neutrophils = pd.concat([pure.iloc[:,i] for i in range(21,28)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+nk = pd.concat([pure.iloc[:,i] for i in range(23,32)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+tregs = pd.concat([pure.iloc[:,i] for i in range(32,37)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+cd8tmem = pd.concat([pure.iloc[:,i] for i in range(37,47)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+dendritic = pd.concat([pure.iloc[:,i] for i in range(47,52)], axis=0).drop_duplicates().reset_index(drop=True).dropna()
+"""

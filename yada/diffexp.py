@@ -22,7 +22,7 @@ def gene_diff(pure):
                 gene_list = gene_list[0:80]
                 break
 
-        print(f'{cell_type} : {gene_list}')
+        #print(f'{cell_type} : {gene_list}')
         gene_list_per_cell[cell_type] = gene_list
 
     gene_list_df = pd.DataFrame(dict([(k, pd.Series([i for (i, j) in v])) for k, v in gene_list_per_cell.items()]), columns=pure.columns)
