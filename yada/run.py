@@ -1,123 +1,95 @@
+#Used in round 3 submit 4.
 import numpy as np
 import pandas as pd
-from sklearn.exceptions import ConvergenceWarning
-from sklearn.preprocessing import minmax_scale
-from scipy.optimize import nnls
-from tslearn import metrics
 from diffexp import gene_diff
-from dataLoader import load_data
-from dsection import dsection
-from cibersort import cibersort
-import logging
-import warnings
-warnings.filterwarnings("ignore", category=ConvergenceWarning)
+from methods import cibersort, dtw_deconv, nnls_deconv_constrained
+#import matplotlib
+#import matplotlib.pyplot as plt
+#import scipy.stats as st
 
-logger = logging.getLogger("pymc3")
-logger.propagate = False
-logger.setLevel(logging.ERROR)
 
-pure = pd.DataFrame()
-mix = pd.DataFrame()
-gene_list_df = pd.DataFrame()
-factor_list = pd.DataFrame()
-real_weight = pd.DataFrame()
-mixtures_sum = []
-other_res = 100
-num_mixes = 0
-num_cells = 0
-test_cases = ['BreastBlood', 'Abbas', 'RatBrain', 'TIMER', 'DSA', 'DeconRNASeq', '10x', 'EPIC', 'CIBERSORT', 'PertU']
+def calc_corr(ens_estimate_wt_2, test):
+    real_weight = pd.read_csv(f'c:/input/prop-{test["dataset.name"]}.csv', index_col=0).T #-Affymetrix HG-U133 Plus 2.0, MAS5
+    ens_estimate_wt_2 = ens_estimate_wt_2[real_weight.columns]
+    #matplotlib.style.use('ggplot')
+    for col in real_weight:
+        #plt.title(f'{test}' + col)
+        #plt.scatter(real_weight[col], ens_estimate_wt_2[col])
+        # plt.show()
+        # plt.savefig(f'c:/work/data/GEO/RNASeq/images/{test}{col}.png', bbox_inches='tight')
+        #plt.close()
+        print(f'Pearson, Spearman correlation of {col}: {np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]}, {st.spearmanr(real_weight[col], ens_estimate_wt_2[col])}')
 
-#This function calculate a deconvolution algorithm.
-def deconv(useSimpleDist):
-    global pure, mix, gene_list_df, factor_list, real_weight, mixtures_sum
-
-    O_array = np.zeros((num_cells, num_mixes))  # The per cell sorted array - how far each mix is from the maximal mix.
-    i = 0
-    #Loop on all cell types.
-    for cell_type in gene_list_df:
-        cell_vals = []
-        cell_genelist = gene_list_df[cell_type].dropna().sample(frac=0.35)
-        mix_temp = mix.loc[cell_genelist]
-        max_ind = mix_temp.sum().idxmax() #Mix with maximum sum of gene expression.
-        max_column = mix_temp[max_ind].copy()
-        max_column.sort_values(ascending=False, inplace=True)
-
-        #Loop on all mixes.
-        k = 0
-        for mix_col in mix_temp:
-            column = mix_temp[mix_col].copy()
-            column = column[max_column.index] #Sort according to the maximum column index.
-
-            P = np.array([column, np.arange(0,len(column.index))])
-            Q = np.array([max_column, np.arange(0, len(max_column.index))])
-            dist = metrics.dtw(Q,P) #0.342
-            if (len(cell_genelist) <= 5):
-                dist = max_column.mean() - column.mean()
-                #print('.', end="")
-            if(useSimpleDist):
-                dist = 0
-                j = 0
-                for gene in cell_genelist:
-                    # Subtract the average of other cells on this gene to compensate for over estimation of ratio.
-                    dist += mixtures_sum[k] * \
-                            ((column[gene] + 0.000001) / (max_column[gene] + 0.000001)) * \
-                            ((factor_list[cell_type][j] + 0.000001) / (factor_list[cell_type].sum() + 0.000001))
-                    j += 1
-
-            cell_vals.append(dist)
-            k += 1
-        O_array[i] = cell_vals
-        i += 1
-    #We have to scale to [0,1] in order for the sum of proportions to be meaningful. Scale along each cell.
-    if(useSimpleDist):
-        O_scaled = np.transpose(O_array)
-    else:
-        O_scaled = np.transpose(1 - minmax_scale(O_array, axis=1))
-    solution = nnls(O_scaled, mixtures_sum)[0]
-    solution_mat = np.diag(solution)
-    estimate_wt = np.matmul(solution_mat, O_scaled.T)
-    return(estimate_wt)
-
-"""This method calculate the score (dist) of an algorithm using L1-norm of distances of proportions.
-result: Calculate how far pure*proportions is from mix.
-dist requires knowledge of the true values. But result does not."""
-def calc_scores(a_prop, b_prop, method_i):
-    dist_from_real_value = np.round(np.sum(np.linalg.norm(np.abs(a_prop - b_prop), axis=0)), 2)
-    #all_marker_genes = pd.concat([gene_list_df.iloc[:, i] for i in range(len(gene_list_df.columns))]).reset_index(drop=True).dropna()
-    #Deviding by mixtures_sum since guessing the right proportions on 0.7 mixtures is harder than on mixtures that are 1.
-    mixtures_sum_quotient = [x**-2 for x in mixtures_sum]
-    dist_from_mix = np.round(np.sum(np.dot(np.abs(mix - np.dot(pure,b_prop.T)), mixtures_sum_quotient)/mix.size), 2)
-    if (other_res < 5):
-      dist_from_mix = np.round(np.square(mix - np.dot(pure,b_prop.T)).values.mean(), 2)
-    print(f'Method {method_i}, distance from real is: {dist_from_real_value}, distance from mix {dist_from_mix}')
-    return dist_from_mix
 
 if __name__ == '__main__':
-    for test in test_cases:
-        mix, pure, real_weight, other_result, mixtures_sum = load_data(test)
-        num_mixes = len(mix.columns)
-        num_cells = len(pure.columns)
-        print(f'\nTest case: {test}, num_cells: {num_cells}, num_mixes: {num_mixes}')
-        if(len(mixtures_sum) == 0):
-            mixtures_sum=[1 for i in range(num_mixes)]
-        gene_list_df, factor_list = gene_diff(pure)
-        _ = calc_scores(real_weight, other_result, 'CIBERSORT')
-        dist_from_mix = 1999
-        methods = [ #[index, method, method parameters, number of ensembles]
-                       [0, deconv, True, 10],
-                       [1, deconv, False, 400],
-                       [2, dsection, {'mix':mix, 'pure':pure, 'gene_list_df':gene_list_df}, 1],
-                       [3, cibersort, {'mix': mix, 'pure': pure}, 1]
-                       ]
+    desc_file = pd.read_csv('/input/input.csv')
+    output_df = pd.DataFrame(columns=['dataset.name', 'sample.id', 'cell.type', 'prediction'])
+    cells_lm14 = ['memory.B.cells','naive.B.cells','memory.CD4.T.cells','naive.CD4.T.cells','regulatory.T.cells','memory.CD8.T.cells','naive.CD8.T.cells','NK.cells','neutrophils','monocytes','myeloid.dendritic.cells','macrophages','fibroblasts','endothelial.cells']
+    cells_lm8 = ['B.cells', 'CD4.T.cells', 'CD8.T.cells', 'NK.cells', 'neutrophils', 'monocytic.lineage', 'fibroblasts', 'endothelial.cells']
+    #mix = pd.read_csv('c:/data/GEO/Microarray/mix-72642-110085/mix.csv', index_col=0)
 
+    k = 0
+    for test_index, test in desc_file.iterrows():
+        mix = pd.read_csv('/input/' + test['hugo.expr.file'], index_col=0)
+        # Anti-log if max < 50 in mixture file
+        if 'Log2' in test["platform"]:
+            mix = 2 ** mix
+        # If Microarray, quantile normalize data (only in some cases like MAS5, RMA already does so).
+        if 'MAS5' in test['platform']:
+            rank_mean = mix.stack().groupby(mix.rank(method='first').stack().astype(int)).mean()
+            mix = mix.rank(method='min').stack().astype(int).map(rank_mean).unstack()
+
+        num_mixes = len(mix.columns)
+        num_cells = 14
+        methods = [
+                   [400, dtw_deconv, ['naive.B.cells', 'regulatory.T.cells'], 'pure_orig8v2_14'],
+                   [400, dtw_deconv, ['NK.cells'], 'ImmunoState'],
+                   [400, dtw_deconv, ['fibroblasts', 'endothelial.cells'], 'LM8'],  # 400
+                   [1, cibersort, ['naive.CD4.T.cells'], 'LM14'],
+                   [1, cibersort, ['naive.CD8.T.cells'], 'ImmunoState'],
+                   [400, dtw_deconv, ['myeloid.dendritic.cells', 'monocytes', 'memory.CD8.T.cells'], 'pure_orig8v2_14'],  # 400
+                   [400, dtw_deconv, ['memory.CD4.T.cells', 'macrophages'], 'LM14'],  # 40
+                   [1, cibersort, ['memory.B.cells'], 'pure_orig8v2_14']
+                  ]
+        if 'HG-U133 Plus 2.0' in test["platform"] and 'MAS5' in test["normalization"]:
+            methods += [[1, cibersort, ['neutrophils'], 'pure_orig8v2_14']]
+        else:
+            methods += [[400, dtw_deconv, ['neutrophils'], 'pure_orig8v2_8']]
+        if 'CPM' in test["normalization"] or 'TPM' in test["normalization"]:
+            methods = [[50, nnls_deconv_constrained, cells_lm14, 'pure_orig8v2_14']] #50
+        if 'Illumina HiSeq 4000' in test["platform"]:
+            methods = [[50, nnls_deconv_constrained, ['naive.B.cells', 'memory.CD4.T.cells', 'naive.CD4.T.cells', 'NK.cells', 'neutrophils', 'monocytes', 'myeloid.dendritic.cells', 'macrophages', 'fibroblasts', 'endothelial.cells'], 'pure_orig8v2_14'],
+                       [1, cibersort, ['memory.B.cells'], 'LM14'],
+                       [400, dtw_deconv, ['naive.CD8.T.cells', 'memory.CD8.T.cells', 'regulatory.T.cells'], 'pure_orig8v2_14']
+                      ]
+
+        ens_estimate_wt_2 = pd.DataFrame()
         for method in methods:
+            print(f'{method[1].__code__.co_name} {test["dataset.name"]}, {test_index}, num_mixes: {num_mixes}, {test["cancer.type"]}, {test["platform"]}, {test["scale"]}, {test["normalization"]}, {test["symbol.compression.function"]}, {method[3]}')
+            pure = pd.read_csv('/' + method[3] + '.csv', index_col=0)
+
+            # Drop genes that are not shared by mix and pure.
+            both_genes = list(set(mix.index) & set(pure.index))
+            pure = pure.reindex(both_genes)
+            mix_loop = mix.copy()
+            mix_loop = mix_loop.reindex(both_genes)
+            gene_list_df, factor_list = gene_diff(pure, test["platform"], test["normalization"])
+
+            num_cells = len(pure.columns)
             ens_estimate_wt = np.zeros((num_cells, num_mixes))
-            for ens_i in range(method[3]):
-                estimate_wt = method[1](method[2])
+            estimate_wt = np.zeros((num_cells, num_mixes))
+            for ens_i in range(method[0]):
+                #print('\r', f"{ens_i / method[0] * 100:.0f}%", end='')
+                estimate_wt = method[1](mix_loop, pure, gene_list_df)
                 ens_estimate_wt += estimate_wt
-            ens_estimate_wt /= method[3]
-            dist_from_mix_temp = calc_scores(real_weight, ens_estimate_wt.T, method[0] + 1)
-            if (dist_from_mix_temp < dist_from_mix):
-                dist_from_mix = dist_from_mix_temp
-                selected = method[0]
-                print(f'---> New best method: {method[0]+1}')
+            ens_estimate_wt /= method[0]
+            ens_estimate_wt = pd.DataFrame(data=ens_estimate_wt, index=pure.columns).T
+            ens_estimate_wt_2 = pd.concat([ens_estimate_wt_2, ens_estimate_wt[method[2]]], axis=1)
+
+        for col in ens_estimate_wt_2: #Loop on cell-types.
+          for j in range(num_mixes): #Loop on samples.
+              output_df.loc[k] = [test['dataset.name'], mix.columns[j], col, ens_estimate_wt_2[col][j]]
+              k += 1
+
+    output_df.to_csv('/output/predictions.csv', index=None)
+    #calc_corr(ens_estimate_wt_2, test)
