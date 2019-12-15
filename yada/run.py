@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from diffexp import gene_diff
-from methods import cibersort, dtw_deconv, nnls_deconv_constrained
+from func import cibersort, dtw_deconv, nnls_deconv_constrained
 #import matplotlib
 #import matplotlib.pyplot as plt
 #import scipy.stats as st
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     for test_index, test in desc_file.iterrows():
         mix = pd.read_csv('/input/' + test['hugo.expr.file'], index_col=0)
         # Anti-log if max < 50 in mixture file
-        if 'Log2' in test["platform"]:
+        if 'Log2' in test["scale"]:
             mix = 2 ** mix
         # If Microarray, quantile normalize data (only in some cases like MAS5, RMA already does so).
         if 'MAS5' in test['platform']:
@@ -79,7 +79,7 @@ if __name__ == '__main__':
             ens_estimate_wt = np.zeros((num_cells, num_mixes))
             estimate_wt = np.zeros((num_cells, num_mixes))
             for ens_i in range(method[0]):
-                #print('\r', f"{ens_i / method[0] * 100:.0f}%", end='')
+                print('\r', f"{ens_i / method[0] * 100:.0f}%", end='')
                 estimate_wt = method[1](mix_loop, pure, gene_list_df)
                 ens_estimate_wt += estimate_wt
             ens_estimate_wt /= method[0]
