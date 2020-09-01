@@ -1,28 +1,18 @@
-# Yada Package
+# Yada Deconvolution Package
 
-- This is the Yada deconvolution package.
-- Run it using the main function in run.py.
-- run.py runs an ensemble of methods to find the best approximation to cell proportions.
-- Ten data sets are available under the data folder, together with the true proportions and CIBERSORT result.
-	- TIMER
-	- PertU
-	- DSA
-	- DeconRNASeq
-	- Abbas
-	- BreastBlood
-	- RatBrain
-	- 10x
-	- EPIC
-	- CIBERSORT
-- Use the first line in run.py to select the datasets to run.
-- The module will run 3 ensemble algorithms and present the one that achieves the best score on each dataset.
+- Ten benchmark data sets are available in the data folder, together with the true proportions (TIMER, PertU, DSA, DeconRNASeq, Abbas, BreastBlood, RatBrain, EPIC, CIBERSORT).
+- Yada supports ensemble of algorithms. Follow the instructions for its configuration.
 
 # Requirements on datasets:
 - Two files:
 	- pure.csv: pure cell genes expression file. n(genes) x k(cell types)
 	- mix.csv: mixtures genes expression file. n(genes) x m(mixtures). Gene symbols in column 1; Mixture labels in row 1.
 - Tabular format with no missing entries.
-- It is OK if some genes are missing from the either file since we run a joined list operation.
-- Data should be in non-log space. If the dataset has maximum expression value is <50 it is
- given in log space, and we run anti-log on all expression values by 2^x.
+- It is OK if some genes are missing from the either file.
+- Data is assumed to be in non-log space. If the dataset maximum expression value is less than 50, we run anti-log on all expression values.
 - Yada performs a marker gene selection algorithm and therefore typically does not use all genes in the signature matrix.
+
+# Running Using Anaconda Environment
+- pip install tslearn
+- git clone https://github.com/zurkin1/Yada.git
+- Using Jupyter notebook open Yada.ipynb and follow the instructions.
