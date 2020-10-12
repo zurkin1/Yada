@@ -64,7 +64,7 @@ def dtw_deconv(mix, pure, gene_list_df):
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
             cell_genelist = gene_list_df[cell_type].dropna()
         # Make sure mix has all the genes in the list.
-        # cell_genelist = list(set(mix.index) & set(cell_genelist))
+        cell_genelist = list(set(mix.index) & set(cell_genelist))
         mix_temp = mix.loc[cell_genelist]
         max_ind = mix_temp.sum().idxmax()  # Mix with maximum sum of gene expression.
         max_column = mix_temp[max_ind].copy()
