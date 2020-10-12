@@ -58,6 +58,7 @@ def dtw_deconv(mix, pure, gene_list_df):
     # Loop on all cell types.
     for cell_type in pure:
         cell_vals = []
+        gene_list_df[cell_type] = gene_list_df[cell_type].str.lower()
         cell_genelist = gene_list_df[cell_type].dropna().sample(frac=round(random.gauss(0.4, 0.03), 2))  # 0.35
         # If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
