@@ -25,6 +25,7 @@ def calc_corr(test, ens_estimate_wt_2):
 def run_deconv(mix, methods):
     pool = mp.Pool()
     mix = pd.read_csv(mix, index_col=0)
+    mix = mix[~mix.index.duplicated(keep='first')]
     num_mixes = len(mix.columns)
     print(f'Deconvolution, num_mixes: {num_mixes}')
     for method in methods:
