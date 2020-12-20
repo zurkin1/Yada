@@ -31,7 +31,7 @@ def run_deconv(mix, methods):
     print(f'Deconvolution, num_mixes: {num_mixes}')
     for method in methods:
         print(f'{method[1].__code__.co_name}, {method[3]}')
-        pure = pd.read_csv(method[3]), index_col=0)
+        pure = pd.read_csv(method[3], index_col=0)
         gene_list_df = pure
 
         # Gene differentiation algorithm.
