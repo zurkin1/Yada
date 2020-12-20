@@ -29,7 +29,7 @@ def run_deconv(num, mix, pure, method):
     mix.index = mix.index.str.lower()
     num_mixes = len(mix.columns)
     print(f'Deconvolution, num_mixes: {num_mixes}')
-    print(f'{method.__code__.co_name}, {method[3]}')
+    print(f'{method.__code__.co_name}')
     pure = pd.read_csv(pure, index_col=0)
     gene_list_df = pure
 
