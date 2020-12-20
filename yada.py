@@ -31,7 +31,7 @@ def run_deconv(mix, methods):
     print(f'Deconvolution, num_mixes: {num_mixes}')
     for method in methods:
         print(f'{method[1].__code__.co_name}, {method[3]}')
-        pure = pd.read_csv('./data/' + method[3] + '.csv') #, index_col=0)
+        pure = pd.read_csv(method[3] + '.csv') #, index_col=0)
         # Drop genes that are not shared by mix and pure.
         #both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
         #pure = pure.reindex(both_genes)
