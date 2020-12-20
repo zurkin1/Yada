@@ -25,7 +25,7 @@ Yada is an Python library for biological cell types deconvolution. Given gene ex
 	- Data is assumed to be in non-log space. If the dataset maximum expression value is less than 50, we run anti-log on all expression values.
 - Yada performs a marker gene selection algorithm and therefore typically does not use all genes in the signature matrix. If this step is not needed a simple code change should comment the relevant lines.
 
-# Running Using Jupyter Notebook or Google Colab
-- pip install tslearn
-- git clone https://github.com/zurkin1/Yada.git
-- Using Jupyter notebook open Yada.ipynb and follow the instructions.
+# Running Using Jupyter Notebook on Google Colab
+- Browse to https://colab.research.google.com/.
+- Using the Gitub tab select https://github.com/zurkin1/Yada.git.
+- Open Yada.ipynb and follow instructions.
