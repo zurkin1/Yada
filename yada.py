@@ -10,7 +10,7 @@ import time
 
 
 def calc_corr(test, ens_estimate_wt_2):
-    real_weight = pd.read_csv(f'c:/input/prop-{test["dataset.name"]}.csv', index_col=0).T
+    real_weight = pd.read_csv(test, index_col=0).T
     # matplotlib.style.use('ggplot')
     for col in real_weight:
         # plt.title(f'{test}' + col)
@@ -19,7 +19,7 @@ def calc_corr(test, ens_estimate_wt_2):
         # plt.savefig(f'c:/work/data/GEO/RNASeq/images/{test}{col}.png', bbox_inches='tight')
         # plt.close()
         if col in ens_estimate_wt_2.columns:
-            print(f'{test["dataset.name"]}, {col}, {np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]}, {st.spearmanr(real_weight[col], ens_estimate_wt_2[col])}')
+            print(f'{col}, {np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]}, {st.spearmanr(real_weight[col], ens_estimate_wt_2[col])}')
 
 
 def run_deconv(num, mix, pure, method):
