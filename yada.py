@@ -32,6 +32,9 @@ def run_deconv(mix, methods):
     for method in methods:
         print(f'{method[1].__code__.co_name}, {method[3]}')
         pure = pd.read_csv(method[3]) #, index_col=0)
+        gene_list_df = pure
+
+        # Gene differentiation algorithm.
         # Drop genes that are not shared by mix and pure.
         #both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
         #pure = pure.reindex(both_genes)
@@ -43,7 +46,7 @@ def run_deconv(mix, methods):
         ens_estimate_wt = np.zeros((num_cells, num_mixes))
         estimate_wt = np.zeros((num_cells, num_mixes))
 
-        results = [pool.apply_async(method[1], args=(mix, pure, pure)) for i in range(method[0])]
+        results = [pool.apply_async(method[1], args=(mix, pure, gene_list_df)) for i in range(method[0])]
         for ens_i in range(method[0]):
             print('\r', f"{ens_i / method[0] * 100:.0f}%", end='')
             ens_estimate_wt += results[ens_i].get()  # estimate_wt
