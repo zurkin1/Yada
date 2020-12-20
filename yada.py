@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from diffexp import gene_diff
-from func import dtw_deconv, nnls_deconv_constrained
+from func import *
 # import matplotlib
 # import matplotlib.pyplot as plt
 import scipy.stats as st
