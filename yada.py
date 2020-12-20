@@ -10,7 +10,7 @@ import time
 
 
 def calc_corr(test, ens_estimate_wt_2):
-    real_weight = pd.read_csv(test, index_col=0).T
+    real_weight = pd.read_csv(test, index_col=0)
     # matplotlib.style.use('ggplot')
     for col in real_weight:
         # plt.title(f'{test}' + col)
