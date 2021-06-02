@@ -1,4 +1,4 @@
-Gene,monocytic.lineage,CD4.T.cells,NK.cells,naive.CD8.T.cells,fibroblasts,endothelial.cells,B.cells,neutrophils
+Gene,monocytic.lineage,naive.CD4.T.cells,NK.cells,naive.CD8.T.cells,fibroblasts,endothelial.cells,naive.B.cells,neutrophils
 ABCA5,18.35739316,43.08169689,63.34601174,48.07726769,25.89600813,79.50603251,27.65254384,26.22902496
 ABCB1,13.46795258,34.89057521,145.813992,57.4775539,20.12920591,9.894062673,72.40094318,23.32784129
 ABHD5,62.87856759,42.79990627,39.96361029,32.9409149,305.9038895,45.14522841,24.3727958,160.3476733
