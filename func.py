@@ -13,6 +13,7 @@ import random
 from random import choice
 #import similaritymeasures
 #from similaritymeasures import pcm
+import gseapy as gp
 
 
 warnings.filterwarnings("ignore")
@@ -58,7 +59,7 @@ def dtw_deconv(mix, pure, gene_list_df):
     # Loop on all cell types.
     for cell_type in pure:
         cell_vals = []
-        gene_list_df[cell_type] = gene_list_df[cell_type].str.lower()
+        gene_list_df[cell_type] = gene_list_df[cell_type].map(str.lower)
         cell_genelist = gene_list_df[cell_type].dropna().sample(frac=round(random.gauss(0.4, 0.03), 2))  # 0.35
         # If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
@@ -227,3 +228,74 @@ def ica_deconv(mix, pure, gene_list_df):
     S_ = model.fit_transform(mix)  # Reconstruct signals.
     A_ = model.mixing_  # Get estimated mixing matrix.
     return A_.T
+
+
+def pxcell(expr):
+    expr = pd.read_csv(expr, index_col=0)
+    # Reduce the expression dataset to contain only the required genes
+    genes = pd.read_csv('./data/xCell/genes.csv', index_col=0)
+    expr = expr.loc[expr.index.intersection(list(genes.x))]
+    #if (len(expr.index) < 5000):
+    #   raise("ERROR: not enough genes")
+
+    # Transform the expression to rank
+    for col in expr:
+        expr[col] = expr[col].rank()
+
+    # Run ssGSEA analysis for the ranked gene expression dataset
+    # txt, gct file input
+    gene_sets = {}
+
+    with open('./data/xCell/signatures.txt') as f:
+        for line in f:
+          key, val = line.split('\t', 1)
+          val = val.split()
+          gene_sets[key] = val
+
+    print(f'Number of samples: {len(expr.columns)}, number of gene sets: {len(gene_sets)}')
+
+    ssg = gp.ssgsea(data=expr,
+                gene_sets=gene_sets, #gene_sets={'A':['gene1', 'gene2',...], 'B':['gene2', 'gene4',...],  ...}
+                #outdir='test/ssgsea_report',
+                sample_norm_method='custom', # choose 'custom' for your own rank list
+                permutation_num=0, # skip permutation procedure, because you don't need it
+                no_plot=True, # skip plotting, because you don't need these figures
+                processes=20,
+                seed=9,
+                scale=False)
+
+    scores = pd.DataFrame(ssg.resultsOnSamples)
+
+    # Rescale on gene sets.
+    scores = scores.subtract(scores.min(axis='columns'), axis='rows')
+
+    # Combine signatures for same cell types
+    scores['cell_type'] = scores.index
+    scores['cell_type'] = scores.cell_type.apply(lambda x: x.split('%', 1)[0])
+    scores = scores.groupby('cell_type').mean()
+
+    fv = pd.read_csv('./data/xCell/spill_fv.csv', index_col=0)
+    fv = fv.reindex(scores.index)
+
+    #Rescale on cell types.
+    scores = scores.subtract(scores.min(axis='columns'), axis='rows')
+    scores = scores/5000
+
+    #Use fv formula tscores <- (tscores^fit.vals[A,2])/(fit.vals[A,3]*2).
+    scores = scores.pow(fv.V2, axis='rows')
+    scores = scores.divide(fv.V3*2, axis='rows')
+
+    #scores = spillOver(transformed.scores,xCell.data$spill.array$K)
+    K = pd.read_csv('./data/xCell/spill_K.csv', index_col=0)
+    K = K.reindex(scores.index)
+    K = K[K.index]
+    alpha = 0.5
+    K = K * alpha
+
+    def spillOver(sample):
+      #Apply correction on samples: scores <- apply(transformedScores[rows, ], 2, function(x) pracma::lsqlincon(K[rows,rows], x, lb = 0)).
+      x, rnorm = nnls(K, sample)
+      return x
+
+    scores = scores.apply(lambda x: spillOver(x), axis='rows')
+    return scores
