@@ -26,5 +26,5 @@ Yada is an Python library for biological cell types deconvolution. Given gene ex
 
 # Running Using Jupyter Notebook on Google Colab
 - Browse to https://colab.research.google.com/.
-- Using the Github tab select https://github.com/zurkin1/Yada.git.
+- Using the Github type the URL https://github.com/zurkin1/Yada/ and select Yada.ipynb.
 - Open Yada.ipynb and follow instructions.
