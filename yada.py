@@ -48,10 +48,11 @@ def run_dtw_deconv(mix, pure):
     ens_estimate_wt = np.zeros((num_cells, num_mixes))
     estimate_wt = np.zeros((num_cells, num_mixes))
 
-    results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df)) for i in range(num_loops)]
+    #results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df)) for i in range(num_loops)]
+    results = [dtw_deconv(mix, pure, gene_list_df) for i in range(num_loops)]
     for ens_i in range(num_loops):
         print('\r', f"{ens_i / num_loops * 100:.0f}%", end='')
-        ens_estimate_wt += results[ens_i].get()  # estimate_wt
+        ens_estimate_wt += results[ens_i] #.get()  # estimate_wt
     ens_estimate_wt /= num_loops
     ens_estimate_wt = pd.DataFrame(data=ens_estimate_wt, index=pure.columns).T
     ens_estimate_wt.to_csv('./data/results.csv')
