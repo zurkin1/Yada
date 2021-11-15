@@ -69,7 +69,7 @@ def gene_diff(pure, mix):
             data2 = data.copy()
             data2['max_val'] = data.drop(cell_type, axis=1).max(axis=1)
             data2['med_val'] = data.drop(cell_type, axis=1).median(axis=1)
-            data2 = data2.loc[(data2[cell_type] > 0.5 * factor * data2.max_val) & (data2.max_val > 0)]  # Ignore cases where all other mixes are zeros.
+            data2 = data2.loc[(data2[cell_type] > 0.5 * factor * data2.max_val)]  # Ignore cases where all other mixes are zeros.  & (data2.max_val > 0)
             # data2 = data2.loc[(data2[cell_type] > 0.5 * factor * data2.max_val) & (data2.med_val > 0)]  # Ignore cases where all other mixes are zeros.
             if (len(data2) == 0):
                 continue
