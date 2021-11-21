@@ -23,7 +23,7 @@ def calc_corr(test, ens_estimate_wt_2):
 
 
 def run_dtw_deconv(mix, pure):
-    num_loops = 100
+    num_loops = 400
     pool = mp.Pool()
     mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)

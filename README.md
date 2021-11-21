@@ -1,4 +1,4 @@
-# Yada Deconvolution Package
+# Yada Deconvolution Package.
 Yada is an Python library for biological cell types deconvolution. Given gene expression data, a deconvolution algorithm is capable of estimating cell type proportions in mixe of cellss. Yada is capable of deconvoluting either by using a list of marker genes or by using a complete pure gene expression matrix. Yada offers the following novelties:
 
 - Performance: Yada’s results on benchmark datasets reached top results on a recent Dream challenge.
@@ -8,13 +8,13 @@ Yada is an Python library for biological cell types deconvolution. Given gene ex
 - Availability: Can be run either as a Jupyter notebook or standalone script.
 
 
-## Pipeline
+## Pipeline.
 ![Yada Flow](/data/Yada.jpg)
 
-# Sample Datasets
+# Sample Datasets.
 - Benchmark data sets are available in the data folder (TIMER, PertU, DSA, DeconRNASeq, Abbas, BreastBlood, RatBrain, EPIC, CIBERSORT).
 
-# Requirements on Input Datasets
+# Requirements on Input Datasets.
 - Two files:
 	- pure.csv: pure cell genes expression file. (n genes) x (k cell types)
 	- mix.csv: mixtures genes expression file. (n genes) x (m mixtures).
@@ -24,7 +24,7 @@ Yada is an Python library for biological cell types deconvolution. Given gene ex
 	- Data is assumed to be in non-log space (scale). If the dataset maximum expression value is less than 50, we run anti-log on all expression values.
 - Yada performs a marker gene selection algorithm and therefore typically does not use all genes in the signature matrix. If this step is not needed a simple code change should comment the relevant lines.
 
-# Running Using Jupyter Notebook on Google Colab
+# Running Using Jupyter Notebook on Google Colab.
 - Browse to https://colab.research.google.com/.
 - Using the Github tab select https://github.com/zurkin1/Yada.git.
 - Open Yada.ipynb and follow instructions.

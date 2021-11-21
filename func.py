@@ -77,6 +77,7 @@ def dtw_deconv(mix, pure, gene_list_df):
             column = mix_temp[mix_col].copy()
             column = column[max_column.index]  # Sort according to the maximum column index.
             dist = dtw_metric(max_column, column)  # 0.342
+            #dist = max_column.mean() - column.mean()
             cell_vals.append(dist)
             k += 1
         O_array[i] = cell_vals
