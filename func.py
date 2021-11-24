@@ -40,15 +40,14 @@ def dtw_metric(P, Q):
         return(P.mean() - Q.mean())
     #factor = max(0.01, np.corrcoef(P, Q)[0][1])
     # dtw, d = similaritymeasures.dtw(Q,P) #0.342
-    # return(metrics.dtw(P1, Q1))  # 0.342
+    return(metrics.dtw(P1, Q1))  # 0.342
     # return(pcm(P1, Q1))
-    return choice(fns)(P1, Q1)
+    # return choice(fns)(P1, Q1)
 
 
 # This function calculate a deconvolution algorithm using DTW ditance and DSA algorithm.
 def dtw_deconv(mix, pure, gene_list_df):
-    if np.min(mix.min()) < 0:
-        raise ValueError('Invalid value')
+    mix[mix < 0] = 0
     gene_list_df.replace(["NaN", 'NaN', 'nan'], np.nan, inplace=True)
     num_cells = len(pure.columns)
     num_mixes = len(mix.columns)
@@ -60,7 +59,7 @@ def dtw_deconv(mix, pure, gene_list_df):
     for cell_type in pure:
         cell_vals = []
         #gene_list_df[cell_type] = gene_list_df[cell_type].map(str.lower)
-        cell_genelist = gene_list_df[cell_type].dropna().sample(frac=round(random.gauss(0.4, 0.03), 2))  # 0.35
+        cell_genelist = gene_list_df[cell_type].dropna().sample(frac=0.35) # round(random.gauss(0.4, 0.03), 2))  # 0.35
         # If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
             cell_genelist = gene_list_df[cell_type].dropna()
@@ -68,8 +67,10 @@ def dtw_deconv(mix, pure, gene_list_df):
         cell_genelist = list(set(mix.index) & set(cell_genelist))
         mix_temp = mix.loc[cell_genelist]
         max_ind = mix_temp.sum().idxmax()  # Mix with maximum sum of gene expression.
-        max_column = mix_temp[max_ind].copy()
-        max_column.sort_values(ascending=False, inplace=True)
+        #max_column = mix_temp[max_ind].copy()
+        pure_temp = pure.loc[cell_genelist]
+        max_column = pure_temp[cell_type].copy()
+        #max_column.sort_values(ascending=False, inplace=True)
 
         # Loop on all mixes.
         k = 0

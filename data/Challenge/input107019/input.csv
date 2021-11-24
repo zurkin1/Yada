@@ -1,2 +1,0 @@
-dataset.name,cancer.type,platform,scale,native.probe.type,native.expr.file,hugo.expr.file,ensg.exor.file,normalization,symbol.compression.function
-107019,NaN,Illumina,Linear,,,mix-107019.csv,,TPM,none
