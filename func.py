@@ -22,24 +22,6 @@ logger.propagate = False
 logger.setLevel(logging.ERROR)
 
 
-def calc_corr(prop, platform, ens_estimate_wt_2):
-    #real_weight = pd.read_csv('./data/Challenge/prop-' + prop, index_col=0).T
-    real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
-    # matplotlib.style.use('ggplot')
-    result = []
-    for col in real_weight:
-        # plt.title(f'{test}' + col)
-        # plt.scatter(real_weight[col], ens_estimate_wt_2[col])
-        # plt.show()
-        # plt.savefig(f'c:/work/data/GEO/RNASeq/images/{test}{col}.png', bbox_inches='tight')
-        # plt.close()
-        if col in ens_estimate_wt_2.columns:
-            pearson = np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]
-            spearman = st.spearmanr(real_weight[col], ens_estimate_wt_2[col])
-            result.append([prop, platform, col, pearson, spearman[0], spearman[1]])
-    return result
-
-
 # This function calculate a deconvolution algorithm using basic ratios algorithm.
 def basic_deconv(P, Q):
     dist = 0
