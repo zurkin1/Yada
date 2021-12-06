@@ -28,7 +28,7 @@ def calc_corr(prop, platform, ens_estimate_wt_2):
 
 
 def run_dtw_deconv(mix, pure):
-    num_loops = 40
+    num_loops = 400
     pool = mp.Pool()
     mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)
@@ -89,8 +89,7 @@ if __name__ == '__main__':
     result = pd.DataFrame([['a', 'b', 'c', 0.0, 0.0, 0.0]]*2)
     for file in ['10x', 'Abbas', 'BreastBlood', 'CIBERSORT', 'DeconRNASeq', 'DSA', 'EPIC', 'RatBrain', 'TIMER']:
         print('\n' + file)
-        pure = f'./data/{file}/pure.csv'
-        res = run_dtw_deconv(f'./data/{file}/mix.csv', pure)
-        res = pd.DataFrame(calc_corr(file, 'Microarray', res))
-        result = pd.concat([result, res])
-    result.to_csv('./data/result.csv')
+        res = run_dtw_deconv(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
+        file_res = pd.DataFrame(calc_corr(file, 'Microarray', res))
+        result = pd.concat([result, file_res])
+    result[2:].to_csv('./data/result.csv')
