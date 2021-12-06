@@ -28,7 +28,7 @@ def calc_corr(prop, platform, ens_estimate_wt_2):
 
 
 def run_dtw_deconv(mix, pure):
-    num_loops = 400
+    num_loops = 40
     pool = mp.Pool()
     mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)
@@ -67,6 +67,7 @@ def run_dtw_deconv(mix, pure):
     pool.close()
     return(ens_estimate_wt)
 
+
 """
 if __name__ == '__main__':
     infiles = pd.read_csv('./data/Challenge/input.csv')
@@ -76,8 +77,8 @@ if __name__ == '__main__':
         print('\n' + file)
         platform = line[1]['type']
         num_cells = str(line[1]['cells'])
-        #pure = './data/' + platform + '_' + num_cells + '.csv'
-        pure = './data/Challenge/pure-' + file
+        pure = './data/' + platform + '_' + num_cells + '.csv'
+        #pure = './data/Challenge/pure-' + file
         res = run_dtw_deconv('./data/Challenge/mix-' + file, pure)
         res = pd.DataFrame(calc_corr(file, platform, res))
         result = pd.concat([result, res])
@@ -86,7 +87,7 @@ if __name__ == '__main__':
 
 if __name__ == '__main__':
     result = pd.DataFrame([['a', 'b', 'c', 0.0, 0.0, 0.0]]*2)
-    for file in ['10x', 'Abbas', 'BreastBlood', 'CIBERSORT', 'DeconRNASeq', 'DSA', 'EPIC', 'pertU', 'RatBrain', 'TIMER']:
+    for file in ['10x', 'Abbas', 'BreastBlood', 'CIBERSORT', 'DeconRNASeq', 'DSA', 'EPIC', 'RatBrain', 'TIMER']:
         print('\n' + file)
         pure = f'./data/{file}/pure.csv'
         res = run_dtw_deconv(f'./data/{file}/mix.csv', pure)

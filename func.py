@@ -12,7 +12,7 @@ import warnings
 import random
 from random import choice
 #import similaritymeasures
-#from similaritymeasures import pcm
+from similaritymeasures import pcm
 import gseapy as gp
 
 
@@ -40,8 +40,8 @@ def dtw_metric(P, Q):
         return(P.mean() - Q.mean())
     #factor = max(0.01, np.corrcoef(P, Q)[0][1])
     # dtw, d = similaritymeasures.dtw(Q,P) #0.342
-    return(metrics.dtw(P1, Q1))  # 0.342
-    # return(pcm(P1, Q1))
+    #return(metrics.dtw(P1, Q1))  # 0.342
+    return(pcm(P1, Q1))
     # return choice(fns)(P1, Q1)
 
 
@@ -59,7 +59,7 @@ def dtw_deconv(mix, pure, gene_list_df):
     for cell_type in pure:
         cell_vals = []
         #gene_list_df[cell_type] = gene_list_df[cell_type].map(str.lower)
-        cell_genelist = gene_list_df[cell_type].dropna().sample(frac=0.35) # round(random.gauss(0.4, 0.03), 2))  # 0.35
+        cell_genelist = gene_list_df[cell_type].dropna().sample(frac=0.85) # round(random.gauss(0.4, 0.03), 2))  # 0.35
         # If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
             cell_genelist = gene_list_df[cell_type].dropna()
@@ -70,7 +70,7 @@ def dtw_deconv(mix, pure, gene_list_df):
         #max_column = mix_temp[max_ind].copy()
         pure_temp = pure.loc[cell_genelist]
         max_column = pure_temp[cell_type].copy()
-        #max_column.sort_values(ascending=False, inplace=True)
+        max_column.sort_values(ascending=False, inplace=True)
 
         # Loop on all mixes.
         k = 0
@@ -79,6 +79,7 @@ def dtw_deconv(mix, pure, gene_list_df):
             column = column[max_column.index]  # Sort according to the maximum column index.
             dist = dtw_metric(max_column, column)  # 0.342
             #dist = max_column.mean() - column.mean()
+            #dist = np.mean(abs(max_coulmn.values - column.values))
             cell_vals.append(dist)
             k += 1
         O_array[i] = cell_vals
