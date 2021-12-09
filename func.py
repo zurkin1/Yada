@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import minmax_scale
 from scipy.optimize import nnls, minimize
+from scipy import stats
+from scipy.spatial import minkowski_distance
 from tslearn import metrics
 from sklearn.svm import LinearSVR  # NuSVR
 from sklearn.linear_model import Lasso
@@ -34,19 +36,19 @@ def basic_deconv(P, Q):
 
 def dtw_metric(P, Q):
     fns = [metrics.dtw] #, similaritymeasures.dtw]
-    P1 = np.array([P.values, np.arange(0, len(P))])  # max(P), round(max(P) / len(P), 2))])
-    Q1 = np.array([Q.values, np.arange(0, len(Q))])  # max(P), round(max(P) / len(P), 2))])
+    P1 = np.array([P.values, np.linspace(0, np.mean(P), len(P))]) # np.arange(0, len(P))
+    Q1 = np.array([Q.values, np.linspace(0, np.mean(Q), len(Q))])
     if (len(P) <= 5):
         return(P.mean() - Q.mean())
     #factor = max(0.01, np.corrcoef(P, Q)[0][1])
     # dtw, d = similaritymeasures.dtw(Q,P) #0.342
-    #return(metrics.dtw(P1, Q1))  # 0.342
-    return(pcm(P1, Q1))
+    return(metrics.dtw(P1, Q1))  # 0.342
+    #return(pcm(P1, Q1))
     # return choice(fns)(P1, Q1)
 
 
 # This function calculate a deconvolution algorithm using DTW ditance and DSA algorithm.
-def dtw_deconv(mix, pure, gene_list_df):
+def dtw_deconv(mix, pure, gene_list_df, metric):
     mix[mix < 0] = 0
     gene_list_df.replace(["NaN", 'NaN', 'nan'], np.nan, inplace=True)
     num_cells = len(pure.columns)
@@ -59,14 +61,14 @@ def dtw_deconv(mix, pure, gene_list_df):
     for cell_type in pure:
         cell_vals = []
         #gene_list_df[cell_type] = gene_list_df[cell_type].map(str.lower)
-        cell_genelist = gene_list_df[cell_type].dropna().sample(frac=0.85) # round(random.gauss(0.4, 0.03), 2))  # 0.35
+        cell_genelist = gene_list_df[cell_type].dropna() #.sample(frac=0.35) # round(random.gauss(0.4, 0.03), 2))  # 0.35
         # If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
             cell_genelist = gene_list_df[cell_type].dropna()
         # Make sure mix has all the genes in the list.
         cell_genelist = list(set(mix.index) & set(cell_genelist))
         mix_temp = mix.loc[cell_genelist]
-        max_ind = mix_temp.sum().idxmax()  # Mix with maximum sum of gene expression.
+        max_ind = mix_temp.mean().idxmax()  # Mix with maximum mean of gene expression.
         #max_column = mix_temp[max_ind].copy()
         pure_temp = pure.loc[cell_genelist]
         max_column = pure_temp[cell_type].copy()
@@ -77,19 +79,32 @@ def dtw_deconv(mix, pure, gene_list_df):
         for mix_col in mix_temp:
             column = mix_temp[mix_col].copy()
             column = column[max_column.index]  # Sort according to the maximum column index.
-            dist = dtw_metric(max_column, column)  # 0.342
-            #dist = max_column.mean() - column.mean()
-            #dist = np.mean(abs(max_coulmn.values - column.values))
+            if metric == 'dtw':
+                dist = dtw_metric(max_column, column)  # 0.342
+            elif metric == 'avg':
+                dist = max_column.mean() - column.mean()
+            elif metric == 'abs':
+                dist = np.mean(abs(max_column.values - column.values))
+            elif metric == 'basic':
+                dist = basic_deconv(max_column, column)
+            elif metric == 'ks':
+                dist, pval = stats.ks_2samp(max_column.values, column.values) # Kolmogarov Smirnoff distance.
+            elif metric == 'euclid':
+                dist = minkowski_distance(max_column, column, p=2)
+            elif metric == 'taxi':
+                dist = minkowski_distance(max_column, column, p=1)
             cell_vals.append(dist)
             k += 1
         O_array[i] = cell_vals
         i += 1
-    # We have to scale to [0,1] in order for the sum of proportions to be meaningful. Scale along each cell.
+
+    # Scale to [0,1] in order for the sum of proportions to be meaningful. Scale along each cell.
     O_scaled = np.transpose(1 - minmax_scale(O_array, axis=1))
     solution = nnls(O_scaled, mixtures_sum)[0]
     solution_mat = np.diag(solution)
     estimate_wt = np.matmul(solution_mat, O_scaled.T)
-    return(estimate_wt)
+
+    return(estimate_wt) #np.max(O_array) - O_array)
 
 
 def cibersort(mix, pure, params):

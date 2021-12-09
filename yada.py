@@ -9,7 +9,7 @@ import multiprocessing as mp
 import time
 
 
-def calc_corr(prop, platform, ens_estimate_wt_2):
+def calc_corr(metric, prop, platform, ens_estimate_wt_2):
     #real_weight = pd.read_csv('./data/Challenge/prop-' + prop, index_col=0).T
     real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
     # matplotlib.style.use('ggplot')
@@ -23,12 +23,12 @@ def calc_corr(prop, platform, ens_estimate_wt_2):
         if col in ens_estimate_wt_2.columns:
             pearson = np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]
             spearman = st.spearmanr(real_weight[col], ens_estimate_wt_2[col])
-            result.append([prop, platform, col, pearson, spearman[0], spearman[1]])
+            result.append([metric, prop, platform, col, pearson, spearman[0], spearman[1]])
     return result
 
 
-def run_dtw_deconv(mix, pure):
-    num_loops = 400
+def run_deconv(mix, pure, test, metric):
+    num_loops = 1
     pool = mp.Pool()
     mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)
@@ -43,7 +43,6 @@ def run_dtw_deconv(mix, pure):
     pure = pure.groupby(pure.index).first()
     if pure.max().max() < 20:
         pure = 2 ** pure
-    print(f'Deconvolution, num_cells: {len(pure.columns)}, num_mixes: {num_mixes}')
 
      # Drop genes that are not shared by mix and pure.
     both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
@@ -53,10 +52,11 @@ def run_dtw_deconv(mix, pure):
     # Gene differentiation algorithm.
     gene_list_df = gene_diff(pure, mix)
 
+    print(f'Deconvolution, num_cells: {len(pure.columns)}, num_mixes: {num_mixes}')
     num_cells = len(pure.columns)
     ens_estimate_wt = np.zeros((num_cells, num_mixes))
     
-    results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df)) for i in range(num_loops)]
+    results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df, metric)) for i in range(num_loops)]
     #results = [dtw_deconv(mix, pure, gene_list_df) for i in range(num_loops)]
     for ens_i in range(num_loops):
         print('\r', f"{ens_i / num_loops * 100:.0f}%", end='')
@@ -86,10 +86,12 @@ if __name__ == '__main__':
 """
 
 if __name__ == '__main__':
-    result = pd.DataFrame([['a', 'b', 'c', 0.0, 0.0, 0.0]]*2)
-    for file in ['10x', 'Abbas', 'BreastBlood', 'CIBERSORT', 'DeconRNASeq', 'DSA', 'EPIC', 'RatBrain', 'TIMER']:
-        print('\n' + file)
-        res = run_dtw_deconv(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
-        file_res = pd.DataFrame(calc_corr(file, 'Microarray', res))
-        result = pd.concat([result, file_res])
+    result = pd.DataFrame([['a', 'b', 'c', 'd', 0.0, 0.0, 0.0]]*2)
+    for metric in ['dtw', 'avg', 'abs', 'basic', 'ks', 'euclid', 'taxi']:
+        for file in ['10x', 'Abbas', 'BreastBlood', 'xCell', 'CIBERSORT', 'DeconRNASeq', 'DSA', 'EPIC', 'RatBrain', 'TIMER']:
+            print(metric, file, ' ', end="")
+            res = run_deconv(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv', file, metric)
+            file_res = pd.DataFrame(calc_corr(metric, file, 'Microarray', res))
+            print(file_res.describe())
+            result = pd.concat([result, file_res])
     result[2:].to_csv('./data/result.csv')
