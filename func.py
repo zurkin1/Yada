@@ -69,9 +69,12 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
         cell_genelist = list(set(mix.index) & set(cell_genelist))
         mix_temp = mix.loc[cell_genelist]
         max_ind = mix_temp.mean().idxmax()  # Mix with maximum mean of gene expression.
-        #max_column = mix_temp[max_ind].copy()
         pure_temp = pure.loc[cell_genelist]
-        max_column = pure_temp[cell_type].copy()
+        pure_column = pure_temp[cell_type].copy()
+        if mix_temp.max().max() > 2*pure_temp.max().max():
+            max_column = mix_temp[max_ind].copy()
+        else:
+            max_column = pure_column
         max_column.sort_values(ascending=False, inplace=True)
 
         # Loop on all mixes.
@@ -104,7 +107,7 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
     solution_mat = np.diag(solution)
     estimate_wt = np.matmul(solution_mat, O_scaled.T)
 
-    return(estimate_wt) #np.max(O_array) - O_array)
+    return O_scaled.T # (estimate_wt) #np.max(O_array) - O_array)
 
 
 def cibersort(mix, pure, params):

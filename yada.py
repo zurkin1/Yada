@@ -34,15 +34,15 @@ def run_deconv(mix, pure, test, metric):
     mix.index = mix.index.map(str.lower)
     mix.index = mix.index.map(str.strip)
     mix = mix.groupby(mix.index).first()
-    if mix.max().max() < 20:
-        mix = 2 ** mix
+    #if mix.max().max() < 20:
+    #    mix = 2 ** mix
     num_mixes = len(mix.columns)
     pure = pd.read_csv(pure, index_col=0)
     pure.index = pure.index.map(str.lower)
     pure.index = pure.index.map(str.strip)
     pure = pure.groupby(pure.index).first()
-    if pure.max().max() < 20:
-        pure = 2 ** pure
+    #if pure.max().max() < 20:
+    #    pure = 2 ** pure
 
      # Drop genes that are not shared by mix and pure.
     both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
@@ -92,6 +92,6 @@ if __name__ == '__main__':
             print(metric, file, ' ', end="")
             res = run_deconv(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv', file, metric)
             file_res = pd.DataFrame(calc_corr(metric, file, 'Microarray', res))
-            print(file_res.describe())
             result = pd.concat([result, file_res])
+        print(result.loc[result[0] == metric].describe())
     result[2:].to_csv('./data/result.csv')
