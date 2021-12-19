@@ -16,6 +16,8 @@ from random import choice
 #import similaritymeasures
 from similaritymeasures import pcm
 import gseapy as gp
+from Pathweigh.udp import *
+from Pathweigh.activity import *
 
 
 warnings.filterwarnings("ignore")
@@ -36,8 +38,8 @@ def basic_deconv(P, Q):
 
 def dtw_metric(P, Q):
     fns = [metrics.dtw] #, similaritymeasures.dtw]
-    P1 = np.array([P.values, np.linspace(0, np.mean(P), len(P))]) # np.arange(0, len(P))
-    Q1 = np.array([Q.values, np.linspace(0, np.mean(Q), len(Q))])
+    P1 = np.array([P.values, np.linspace(0, np.max(P), len(P))]) # np.arange(0, len(P))
+    Q1 = np.array([Q.values, np.linspace(0, np.max(Q), len(Q))])
     if (len(P) <= 5):
         return(P.mean() - Q.mean())
     #factor = max(0.01, np.corrcoef(P, Q)[0][1])
@@ -49,6 +51,11 @@ def dtw_metric(P, Q):
 
 # This function calculate a deconvolution algorithm using DTW ditance and DSA algorithm.
 def dtw_deconv(mix, pure, gene_list_df, metric):
+    if(metric == 'pathweigh'):
+        merged = pd.concat([mix, pure], axis=1)
+        udp = calc_udp_multi_process(merged, True)
+        activity_obj = path_activity(udp, True)
+        activity_obj.calc_activity_consistency_multi_process()
     mix[mix < 0] = 0
     gene_list_df.replace(["NaN", 'NaN', 'nan'], np.nan, inplace=True)
     num_cells = len(pure.columns)
@@ -75,13 +82,13 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
             max_column = mix_temp[max_ind].copy()
         else:
             max_column = pure_column
-        max_column.sort_values(ascending=False, inplace=True)
+        #max_column.sort_values(ascending=False, inplace=True)
 
         # Loop on all mixes.
         k = 0
         for mix_col in mix_temp:
             column = mix_temp[mix_col].copy()
-            column = column[max_column.index]  # Sort according to the maximum column index.
+            #column = column[max_column.index]  # Sort according to the maximum column index.
             if metric == 'dtw':
                 dist = dtw_metric(max_column, column)  # 0.342
             elif metric == 'avg':
@@ -96,6 +103,10 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
                 dist = minkowski_distance(max_column, column, p=2)
             elif metric == 'taxi':
                 dist = minkowski_distance(max_column, column, p=1)
+            elif metric == 'pathweigh':
+                max_column = activity_obj.activity[cell_type].copy()
+                column = activity_obj.activity[mix_col].copy()
+                dist = sum(abs(max_column.values - column.values))
             cell_vals.append(dist)
             k += 1
         O_array[i] = cell_vals
