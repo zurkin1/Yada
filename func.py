@@ -16,6 +16,7 @@ from random import choice
 #import similaritymeasures
 from similaritymeasures import pcm
 import gseapy as gp
+from udp import calc_udp_multi_process
 
 
 warnings.filterwarnings("ignore")
@@ -73,6 +74,7 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
         pure_column = pure_temp[cell_type].copy()
         if mix_temp.max().max() > 2*pure_temp.max().max():
             max_column = mix_temp[max_ind].copy()
+            print('.', end="")
         else:
             max_column = pure_column
         max_column.sort_values(ascending=False, inplace=True)
