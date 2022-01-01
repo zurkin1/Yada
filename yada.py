@@ -10,8 +10,8 @@ import time
 
 
 def calc_corr(metric, prop, platform, ens_estimate_wt_2):
-    real_weight = pd.read_csv('./data/Challenge/prop-' + prop, index_col=0).T
-    #real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
+    #real_weight = pd.read_csv('./data/Challenge/prop-' + prop, index_col=0).T
+    real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
     # matplotlib.style.use('ggplot')
     result = []
     for col in real_weight:
@@ -27,15 +27,15 @@ def calc_corr(metric, prop, platform, ens_estimate_wt_2):
     return result
 
 
-def preprocess(file):
-    mix = pd.read_csv('./data/Challenge/mix-' + file, index_col=0)
+def preprocess(mix, pure):
+    mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)
     mix.index = mix.index.map(str.strip)
     mix = mix.groupby(mix.index).first()
     if mix.max().max() < 20:
         mix = 2 ** mix
     num_mixes = len(mix.columns)
-    pure = pd.read_csv('./data/Challenge/pure-' + file, index_col=0)
+    pure = pd.read_csv(pure, index_col=0)
     pure.index = pure.index.map(str.lower)
     pure.index = pure.index.map(str.strip)
     pure = pure.groupby(pure.index).first()
@@ -48,10 +48,10 @@ def preprocess(file):
     mix = mix.reindex(both_genes)
 
     #Change to UDP.
-    merged_df = pd.concat([mix, pure], axis=1)
-    df = calc_udp_multi_process(merged_df, True)
-    mix = df.iloc[:,0:num_mixes].copy()
-    pure = df.iloc[:,num_mixes:].copy()
+    #merged_df = pd.concat([mix, pure], axis=1)
+    #df = calc_udp_multi_process(merged_df, True)
+    #mix = df.iloc[:,0:num_mixes].copy()
+    #pure = df.iloc[:,num_mixes:].copy()
 
     # Gene differentiation algorithm.
     gene_list_df = gene_diff(pure, mix)
@@ -62,7 +62,6 @@ def run_deconv(mix, pure, gene_list_df, metric):
     num_loops = 1
     #pool = mp.Pool()
     num_mixes = len(mix.columns)
-    print(f'Deconvolution, num_cells: {len(pure.columns)}, num_mixes: {num_mixes}')
     num_cells = len(pure.columns)
     ens_estimate_wt = np.zeros((num_cells, num_mixes))
     
@@ -78,6 +77,7 @@ def run_deconv(mix, pure, gene_list_df, metric):
     return(ens_estimate_wt)
 
 
+"""
 if __name__ == '__main__':
     infiles = pd.read_csv('./data/Challenge/input1.csv')
     result = pd.DataFrame([['a', 'b', 'c', 0.0, 0.0, 0.0]]*2)
@@ -94,17 +94,17 @@ if __name__ == '__main__':
             result = pd.concat([result, res])
         #print(result.loc[result[0] == metric].describe())
             result.to_csv('./data/result.csv')
-
-
 """
+
+
 if __name__ == '__main__':
-    result = pd.DataFrame([['a', 'b', 'c', 'd', 0.0, 0.0, 0.0]]*2)
-    for metric in ['dtw', 'avg' , 'abs', 'basic', 'ks', 'euclid', 'taxi']:
-        for file in ['ABIS']: #'10x', 'Abbas', 'BreastBlood', 'CIBERSORT, 'DeconRNASeq', 'DSA', 'EPIC', 'xCell', 'RatBrain', 'TIMER']:
-            print(metric, file, ' ', end="")
-            res = run_deconv(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv', file, metric)
+    result = pd.DataFrame()
+    for file in ['ABIS', '10x', 'Abbas', 'BreastBlood', 'CIBERSORT', 'DeconRNASeq', 'DSA', 'EPIC', 'xCell', 'RatBrain', 'TIMER']:
+        mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
+        print(file, f'num_cells: {len(pure.columns)}, num_mixes: {len(mix.columns)}')
+        for metric in ['dtw', 'avg' , 'abs', 'basic', 'ks', 'euclid', 'taxi']:
+            res = run_deconv(mix, pure, gene_list_df, metric)
             file_res = pd.DataFrame(calc_corr(metric, file, 'Microarray', res))
             result = pd.concat([result, file_res])
-        print(result.loc[result[0] == metric].describe())
-    result[2:].to_csv('./data/result.csv')
-"""
+        #print(result.loc[result[0] == metric].describe())
+        result.to_csv('./data/result.csv')
