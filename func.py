@@ -13,10 +13,9 @@ import logging
 import warnings
 import random
 from random import choice
-#import similaritymeasures
+import similaritymeasures
 from similaritymeasures import pcm
 import gseapy as gp
-from udp import calc_udp_multi_process
 
 
 warnings.filterwarnings("ignore")
@@ -37,12 +36,12 @@ def basic_deconv(P, Q):
 
 def dtw_metric(P, Q):
     fns = [metrics.dtw] #, similaritymeasures.dtw]
-    P1 = np.array([P.values, np.linspace(0, np.mean(P), len(P))]) # np.arange(0, len(P))
-    Q1 = np.array([Q.values, np.linspace(0, np.mean(Q), len(Q))])
+    P1 = np.array([P.values, np.linspace(0, np.max(P), len(P))]) # np.arange(0, len(P))
+    Q1 = np.array([Q.values, np.linspace(0, np.max(P), len(Q))])
     if (len(P) <= 5):
         return(P.mean() - Q.mean())
     #factor = max(0.01, np.corrcoef(P, Q)[0][1])
-    # dtw, d = similaritymeasures.dtw(Q,P) #0.342
+    #return similaritymeasures.dtw(Q1.T,P1.T)[0] #0.342
     return(metrics.dtw(P1, Q1))  # 0.342
     #return(pcm(P1, Q1))
     # return choice(fns)(P1, Q1)
@@ -50,7 +49,7 @@ def dtw_metric(P, Q):
 
 # This function calculate a deconvolution algorithm using DTW ditance and DSA algorithm.
 def dtw_deconv(mix, pure, gene_list_df, metric):
-    mix[mix < 0] = 0
+    #mix[mix < 0] = 0
     gene_list_df.replace(["NaN", 'NaN', 'nan'], np.nan, inplace=True)
     num_cells = len(pure.columns)
     num_mixes = len(mix.columns)
@@ -63,10 +62,10 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
         cell_vals = []
         #gene_list_df[cell_type] = gene_list_df[cell_type].map(str.lower)
         cell_genelist = gene_list_df[cell_type].dropna() #.sample(frac=0.35) # round(random.gauss(0.4, 0.03), 2))  # 0.35
-        # If marker list or sample list is short, don't sample.
+        #If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
             cell_genelist = gene_list_df[cell_type].dropna()
-        # Make sure mix has all the genes in the list.
+        #Make sure mix has all the genes in the list.
         cell_genelist = list(set(mix.index) & set(cell_genelist))
         mix_temp = mix.loc[cell_genelist]
         max_ind = mix_temp.mean().idxmax()  # Mix with maximum mean of gene expression.
@@ -104,12 +103,12 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
         i += 1
 
     # Scale to [0,1] in order for the sum of proportions to be meaningful. Scale along each cell.
-    O_scaled = np.transpose(1 - minmax_scale(O_array, axis=1))
-    solution = nnls(O_scaled, mixtures_sum)[0]
-    solution_mat = np.diag(solution)
-    estimate_wt = np.matmul(solution_mat, O_scaled.T)
+    #O_scaled = np.transpose(1 - minmax_scale(O_array, axis=1))
+    #solution = nnls(O_scaled, mixtures_sum)[0]
+    #solution_mat = np.diag(solution)
+    #estimate_wt = np.matmul(solution_mat, O_scaled.T)
 
-    return O_scaled.T # (estimate_wt) #np.max(O_array) - O_array)
+    return np.max(O_array) - O_array #O_scaled.T # (estimate_wt)
 
 
 def cibersort(mix, pure, params):

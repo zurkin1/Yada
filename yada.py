@@ -9,6 +9,11 @@ import multiprocessing as mp
 import time
 
 
+def poincare_norm(a):
+    ret = np.arccosh(1 + 2 * (np.linalg.norm(a) ** 2) / (1 - np.linalg.norm(a) ** 2))
+    return(ret)
+
+
 def calc_corr(metric, prop, platform, ens_estimate_wt_2):
     #real_weight = pd.read_csv('./data/Challenge/prop-' + prop, index_col=0).T
     real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
@@ -42,10 +47,15 @@ def preprocess(mix, pure):
     if pure.max().max() < 20:
         pure = 2 ** pure
 
+    # Go function gene scaling.
+    hig2vec = pd.read_csv('hig2vec.csv', index_col = 0)
+    hig2vec.index = hig2vec.index.map(str.lower)
+
      # Drop genes that are not shared by mix and pure.
-    both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
+    both_genes = list(set(mix.index) & set(pure.index) & set(hig2vec.index))  # - set(BRCA)
     pure = pure.reindex(both_genes)
     mix = mix.reindex(both_genes)
+    hig2vec = hig2vec.reindex(both_genes)
 
     #Change to UDP.
     #merged_df = pd.concat([mix, pure], axis=1)
@@ -55,6 +65,15 @@ def preprocess(mix, pure):
 
     # Gene differentiation algorithm.
     gene_list_df = gene_diff(pure, mix)
+
+    #Standardize.
+    mix = mix.apply(lambda x: (x-x.mean())/(x.std()+1e-6), axis=1)
+    pure = pure.apply(lambda x: (x-x.mean())/(x.std()+1e-6), axis=1)
+
+    norma = [1/poincare_norm(hig2vec.loc[i].values) for i in hig2vec.index]
+    mix = mix.mul(norma, axis=0)
+    pure = pure.mul(norma, axis=0)
+
     return(mix, pure, gene_list_df)
 
 
@@ -98,13 +117,16 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
+    metrics = ['dtw', 'avg' , 'abs', 'basic', 'ks', 'euclid', 'taxi']
     result = pd.DataFrame()
-    for file in ['ABIS', '10x', 'Abbas', 'BreastBlood', 'CIBERSORT', 'DeconRNASeq', 'DSA', 'EPIC', 'xCell', 'RatBrain', 'TIMER']:
+    for file in ['ABIS', '10x', 'CIBERSORT', 'EPIC', 'xCell', 'TIMER', 'Abbas', 'BreastBlood']: #'DeconRNASeq', 'DSA', 'RatBrain'
         mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
         print(file, f'num_cells: {len(pure.columns)}, num_mixes: {len(mix.columns)}')
-        for metric in ['dtw', 'avg' , 'abs', 'basic', 'ks', 'euclid', 'taxi']:
+        for metric in metrics:
             res = run_deconv(mix, pure, gene_list_df, metric)
             file_res = pd.DataFrame(calc_corr(metric, file, 'Microarray', res))
             result = pd.concat([result, file_res])
-        #print(result.loc[result[0] == metric].describe())
-        result.to_csv('./data/result.csv')
+
+    for metric in metrics:
+        print(metric, result.loc[result[0] == metric].describe())
+    result.to_csv('./data/result.csv')
