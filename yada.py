@@ -14,9 +14,23 @@ def poincare_norm(a):
     return(ret)
 
 
+def go_norm(expr):
+    # Go function gene scaling.
+    hig2vec = pd.read_csv('hig2vec.csv', index_col = 0)
+    hig2vec.index = hig2vec.index.map(str.lower)
+    both_genes = list(set(expr.index) & set(hig2vec.index))
+    expr = expr.reindex(both_genes)
+    hig2vec = hig2vec.reindex(both_genes)
+    norma = [poincare_norm(hig2vec.loc[i].values) for i in hig2vec.index]
+    return(expr.mul(norma, axis = 0))
+
+
 def calc_corr(metric, prop, platform, ens_estimate_wt_2):
     #real_weight = pd.read_csv('./data/Challenge/prop-' + prop, index_col=0).T
     real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
+    both_mixes = list(set(ens_estimate_wt_2.index) & set(real_weight.index))
+    ens_estimate_wt_2 = ens_estimate_wt_2.reindex(both_mixes)
+    real_weight = real_weight.reindex(both_mixes)
     # matplotlib.style.use('ggplot')
     result = []
     for col in real_weight:
@@ -47,15 +61,10 @@ def preprocess(mix, pure):
     if pure.max().max() < 20:
         pure = 2 ** pure
 
-    # Go function gene scaling.
-    hig2vec = pd.read_csv('hig2vec.csv', index_col = 0)
-    hig2vec.index = hig2vec.index.map(str.lower)
-
      # Drop genes that are not shared by mix and pure.
-    both_genes = list(set(mix.index) & set(pure.index) & set(hig2vec.index))  # - set(BRCA)
+    both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
     pure = pure.reindex(both_genes)
     mix = mix.reindex(both_genes)
-    hig2vec = hig2vec.reindex(both_genes)
 
     #Change to UDP.
     #merged_df = pd.concat([mix, pure], axis=1)
@@ -70,9 +79,8 @@ def preprocess(mix, pure):
     mix = mix.apply(lambda x: (x-x.mean())/(x.std()+1e-6), axis=1)
     pure = pure.apply(lambda x: (x-x.mean())/(x.std()+1e-6), axis=1)
 
-    norma = [1/poincare_norm(hig2vec.loc[i].values) for i in hig2vec.index]
-    mix = mix.mul(norma, axis=0)
-    pure = pure.mul(norma, axis=0)
+    mix = go_norm(mix)
+    pure = go_norm(pure)
 
     return(mix, pure, gene_list_df)
 
@@ -91,6 +99,7 @@ def run_deconv(mix, pure, gene_list_df, metric):
         ens_estimate_wt += results[ens_i] #.get()
     ens_estimate_wt /= num_loops
     ens_estimate_wt = pd.DataFrame(data=ens_estimate_wt, index=pure.columns).T
+    ens_estimate_wt.index = mix.columns
     #ens_estimate_wt.to_csv('./data/results.csv')
     #pool.close()
     return(ens_estimate_wt)
@@ -119,7 +128,7 @@ if __name__ == '__main__':
 if __name__ == '__main__':
     metrics = ['dtw', 'avg' , 'abs', 'basic', 'ks', 'euclid', 'taxi']
     result = pd.DataFrame()
-    for file in ['ABIS', '10x', 'CIBERSORT', 'EPIC', 'xCell', 'TIMER', 'Abbas', 'BreastBlood']: #'DeconRNASeq', 'DSA', 'RatBrain'
+    for file in ['xCell', 'ABIS', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood']: #'DeconRNASeq', 'DSA', 'RatBrain'
         mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
         print(file, f'num_cells: {len(pure.columns)}, num_mixes: {len(mix.columns)}')
         for metric in metrics:

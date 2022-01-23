@@ -1,0 +1,13 @@
+LINE 649 : 2022-01-23 15:53:44,815 [INFO    ] Parsing data files for ssGSEA...........................
+LINE 587 : 2022-01-23 15:53:44,815 [DEBUG   ] Input data is a DataFrame with gene names
+LINE 640 : 2022-01-23 15:53:44,818 [INFO    ] Use custom rank metric for ssGSEA
+LINE 138 : 2022-01-23 15:53:46,724 [INFO    ] 0271 gene_sets have been filtered out when max_size=2000 and min_size=15
+LINE 656 : 2022-01-23 15:53:46,724 [INFO    ] 0218 gene_sets used for further statistical testing.....
+LINE 660 : 2022-01-23 15:53:46,724 [INFO    ] Start to run ssGSEA...Might take a while................
+LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137169 
+LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137172 
+LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137208 
+LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137209 
+LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137220 
+LINE 796 : 2022-01-23 15:53:55,104 [INFO    ] Congratulations. GSEApy runs successfully................
+
