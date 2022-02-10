@@ -10,7 +10,8 @@ import time
 
 
 def poincare_norm(a):
-    ret = np.arccosh(1 + 2 * (np.linalg.norm(a) ** 2) / (1 - np.linalg.norm(a) ** 2))
+    #ret = np.arccosh(1 + 2 * (np.linalg.norm(a) ** 2) / (1 - np.linalg.norm(a) ** 2))
+    ret = np.linalg.norm(a)
     return(ret)
 
 
@@ -18,11 +19,13 @@ def go_norm(expr):
     # Go function gene scaling.
     hig2vec = pd.read_csv('hig2vec.csv', index_col = 0)
     hig2vec.index = hig2vec.index.map(str.lower)
-    both_genes = list(set(expr.index) & set(hig2vec.index))
-    expr = expr.reindex(both_genes)
-    hig2vec = hig2vec.reindex(both_genes)
-    norma = [poincare_norm(hig2vec.loc[i].values) for i in hig2vec.index]
-    return(expr.mul(norma, axis = 0))
+    
+    #both_genes = list(set(expr.index) & set(hig2vec.index))
+    #expr = expr.reindex(both_genes)
+    #hig2vec = hig2vec.reindex(both_genes)
+    hig2vec['norm'] = hig2vec.apply(poincare_norm, axis = 0)
+    hig2vec3 = expr.join(hig2vec)['norm'].fillna(1)
+    return(expr.mul(hig2vec3, axis = 0))
 
 
 def calc_corr(metric, prop, platform, ens_estimate_wt_2):
@@ -46,7 +49,7 @@ def calc_corr(metric, prop, platform, ens_estimate_wt_2):
     return result
 
 
-def preprocess(mix, pure):
+def preprocess(mix, pure, GO = False):
     mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)
     mix.index = mix.index.map(str.strip)
@@ -61,7 +64,7 @@ def preprocess(mix, pure):
     if pure.max().max() < 20:
         pure = 2 ** pure
 
-     # Drop genes that are not shared by mix and pure.
+    #Drop genes that are not shared by mix and pure.
     both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
     pure = pure.reindex(both_genes)
     mix = mix.reindex(both_genes)
@@ -76,16 +79,19 @@ def preprocess(mix, pure):
     gene_list_df = gene_diff(pure, mix)
 
     #Standardize.
-    mix = mix.apply(lambda x: (x-x.mean())/(x.std()+1e-6), axis=1)
-    pure = pure.apply(lambda x: (x-x.mean())/(x.std()+1e-6), axis=1)
+    mix = (mix-mix.min())/mix.mean() #mix.apply(lambda x: (x-x.mean())/(x.std()), axis=1) #+1e-16
+    pure = (pure-pure.min())/pure.mean() #pure.apply(lambda x: (x-x.mean())/(x.std()), axis=1)
 
-    mix = go_norm(mix)
-    pure = go_norm(pure)
+    if GO:
+        mix = go_norm(mix)
+        #pure = go_norm(pure)
 
     return(mix, pure, gene_list_df)
 
 
-def run_deconv(mix, pure, gene_list_df, metric):
+def run_dtw_deconv(mix, pure):
+    #metrics = ['dtw', 'avg' , 'abs', 'ks', 'euclid', 'taxi'] #'basic',
+    metric = 'dtw'
     num_loops = 1
     #pool = mp.Pool()
     num_mixes = len(mix.columns)
@@ -126,16 +132,14 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
-    metrics = ['dtw', 'avg' , 'abs', 'basic', 'ks', 'euclid', 'taxi']
     result = pd.DataFrame()
-    for file in ['xCell', 'ABIS', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood']: #'DeconRNASeq', 'DSA', 'RatBrain'
-        mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
-        print(file, f'num_cells: {len(pure.columns)}, num_mixes: {len(mix.columns)}')
-        for metric in metrics:
-            res = run_deconv(mix, pure, gene_list_df, metric)
-            file_res = pd.DataFrame(calc_corr(metric, file, 'Microarray', res))
-            result = pd.concat([result, file_res])
+    for file in ['xCell', 'Mysort', 'ABIS']: #, 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
+        for GO in [False, True]:
+            mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv', GO)
+            print(file, GO) #f'num_cells: {len(pure.columns)}, num_mixes: {len(mix.columns)}')
+            for method in [cibersort, nnls_deconv_constrained]:
+                res = method(mix, pure)
+                file_res = pd.DataFrame(calc_corr(method.__name__, file, GO, res))
+                result = pd.concat([result, file_res])
 
-    for metric in metrics:
-        print(metric, result.loc[result[0] == metric].describe())
     result.to_csv('./data/result.csv')

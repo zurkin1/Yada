@@ -61,7 +61,7 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
     for cell_type in pure:
         cell_vals = []
         #gene_list_df[cell_type] = gene_list_df[cell_type].map(str.lower)
-        cell_genelist = gene_list_df[cell_type].dropna() #.sample(frac=0.35) # round(random.gauss(0.4, 0.03), 2))  # 0.35
+        cell_genelist = gene_list_df[cell_type].dropna() #.sample(frac=0.85) # round(random.gauss(0.4, 0.03), 2))  # 0.35
         #If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
             cell_genelist = gene_list_df[cell_type].dropna()
@@ -102,20 +102,20 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
         O_array[i] = cell_vals
         i += 1
 
-    # Scale to [0,1] in order for the sum of proportions to be meaningful. Scale along each cell.
+    #Scale to [0,1] in order for the sum of proportions to be meaningful. Scale along each cell.
     #O_scaled = np.transpose(1 - minmax_scale(O_array, axis=1))
     #solution = nnls(O_scaled, mixtures_sum)[0]
     #solution_mat = np.diag(solution)
     #estimate_wt = np.matmul(solution_mat, O_scaled.T)
 
-    return np.max(O_array) - O_array #O_scaled.T # (estimate_wt)
+    return np.max(O_array) - O_array #O_scaled.T #estimate_wt
 
 
-def cibersort(mix, pure, params):
+def cibersort(mix, pure):
     epsilon = 0.25
     # Standardize data.
-    mix = (mix - mix.mean()) / mix.std()
-    pure = (pure - np.mean(pure.values)) / np.std(pure.values)
+    #mix = (mix - mix.mean()) / mix.std()
+    #pure = (pure - np.mean(pure.values)) / np.std(pure.values)
 
     p = np.zeros([len(mix.columns), len(pure.columns)])
     i = 0
@@ -128,10 +128,10 @@ def cibersort(mix, pure, params):
         w = model.coef_
         # w = w.clip(min=0) #Limit to positive values only in case we look for proportions (not in case we look only for correlation).
         # w = w/sum(sum(w))
-        w = w / sum(w)
+        #w = w / sum(w)
         p[i] = w
         i += 1
-    return np.transpose(p)
+    return pd.DataFrame(data = p, index = mix.columns, columns = pure.columns)
 
 
 """
@@ -190,7 +190,7 @@ def lasso(mix, pure, params):
 # This function calculate a deconvolution algorithm using non-negative least square optimization of direct equation Prop * Pure = Mix
 # under constraints of Prop == 1 (similar to deconRNASeq). Cellmix doesn't use pure matrix hence NNMF is needed.
 # https://stackoverflow.com/questions/33385898/how-to-include-constraint-to-scipy-nnls-function-solution-so-that-it-sums-to-1?lq=1
-def nnls_deconv_constrained(mix, pure, params):
+def nnls_deconv_constrained(mix, pure, params = None):
     # if params is not None:
     #    mix = params[0].copy()
     #    pure = params[1].copy()
@@ -202,8 +202,8 @@ def nnls_deconv_constrained(mix, pure, params):
     # mix = mix.loc[sorted_sample]
     # pure = pure.loc[sorted_sample]
 
-    pure = pure.sample(frac=0.75)
-    mix = mix.loc[pure.index]
+    #pure = pure.sample(frac=0.75)
+    #mix = mix.loc[pure.index]
 
     result = np.zeros((num_mixes, num_cells))
 
@@ -230,7 +230,7 @@ def nnls_deconv_constrained(mix, pure, params):
 
         result[i] = x
         i += 1
-    return(result.T)
+    return pd.DataFrame(data = result, index = mix.columns, columns = pure.columns)
 
 
 def ica_deconv(mix, pure, gene_list_df):
@@ -256,6 +256,7 @@ def pxcell(expr):
     expr = pd.read_csv(expr, index_col=0)
     # Reduce the expression dataset to contain only the required genes
     genes = pd.read_csv('./data/xCell/genes.csv', index_col=0)
+    genes['x'] = genes.x.map(str.lower)
     expr = expr.loc[expr.index.intersection(list(genes.x))]
     #if (len(expr.index) < 5000):
     #   raise("ERROR: not enough genes")
@@ -272,7 +273,7 @@ def pxcell(expr):
         for line in f:
           key, val = line.split('\t', 1)
           val = val.split()
-          gene_sets[key] = val
+          gene_sets[key] = [str.lower(i) for i in val]
 
     print(f'Number of samples: {len(expr.columns)}, number of gene sets: {len(gene_sets)}')
 

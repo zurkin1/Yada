@@ -1,13 +1,28 @@
-LINE 649 : 2022-01-23 15:53:44,815 [INFO    ] Parsing data files for ssGSEA...........................
-LINE 587 : 2022-01-23 15:53:44,815 [DEBUG   ] Input data is a DataFrame with gene names
-LINE 640 : 2022-01-23 15:53:44,818 [INFO    ] Use custom rank metric for ssGSEA
-LINE 138 : 2022-01-23 15:53:46,724 [INFO    ] 0271 gene_sets have been filtered out when max_size=2000 and min_size=15
-LINE 656 : 2022-01-23 15:53:46,724 [INFO    ] 0218 gene_sets used for further statistical testing.....
-LINE 660 : 2022-01-23 15:53:46,724 [INFO    ] Start to run ssGSEA...Might take a while................
-LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137169 
-LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137172 
-LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137208 
-LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137209 
-LINE 762 : 2022-01-23 15:53:55,104 [INFO    ] Calculate Enrichment Score for Sample: SUB137220 
-LINE 796 : 2022-01-23 15:53:55,104 [INFO    ] Congratulations. GSEApy runs successfully................
+LINE 649 : 2022-02-01 13:55:53,694 [INFO    ] Parsing data files for ssGSEA...........................
+LINE 587 : 2022-02-01 13:55:53,694 [DEBUG   ] Input data is a DataFrame with gene names
+LINE 640 : 2022-02-01 13:55:53,695 [INFO    ] Use custom rank metric for ssGSEA
+LINE 138 : 2022-02-01 13:55:53,894 [INFO    ] 0443 gene_sets have been filtered out when max_size=2000 and min_size=15
+LINE 656 : 2022-02-01 13:55:53,894 [INFO    ] 0046 gene_sets used for further statistical testing.....
+LINE 660 : 2022-02-01 13:55:53,894 [INFO    ] Start to run ssGSEA...Might take a while................
+LINE 762 : 2022-02-01 13:55:54,877 [INFO    ] Calculate Enrichment Score for Sample: 17-002 
+LINE 762 : 2022-02-01 13:55:54,878 [INFO    ] Calculate Enrichment Score for Sample: 17-006 
+LINE 762 : 2022-02-01 13:55:54,880 [INFO    ] Calculate Enrichment Score for Sample: 17-019 
+LINE 762 : 2022-02-01 13:55:54,882 [INFO    ] Calculate Enrichment Score for Sample: 17-023 
+LINE 762 : 2022-02-01 13:55:54,882 [INFO    ] Calculate Enrichment Score for Sample: 17-026 
+LINE 762 : 2022-02-01 13:55:54,883 [INFO    ] Calculate Enrichment Score for Sample: 17-027 
+LINE 762 : 2022-02-01 13:55:54,883 [INFO    ] Calculate Enrichment Score for Sample: 17-030 
+LINE 762 : 2022-02-01 13:55:54,884 [INFO    ] Calculate Enrichment Score for Sample: 17-034 
+LINE 762 : 2022-02-01 13:55:54,884 [INFO    ] Calculate Enrichment Score for Sample: 17-040 
+LINE 762 : 2022-02-01 13:55:54,885 [INFO    ] Calculate Enrichment Score for Sample: 17-041 
+LINE 762 : 2022-02-01 13:55:54,885 [INFO    ] Calculate Enrichment Score for Sample: 17-042 
+LINE 762 : 2022-02-01 13:55:54,886 [INFO    ] Calculate Enrichment Score for Sample: 17-043 
+LINE 762 : 2022-02-01 13:55:54,886 [INFO    ] Calculate Enrichment Score for Sample: 17-045 
+LINE 762 : 2022-02-01 13:55:54,887 [INFO    ] Calculate Enrichment Score for Sample: 17-047 
+LINE 762 : 2022-02-01 13:55:54,887 [INFO    ] Calculate Enrichment Score for Sample: 17-054 
+LINE 762 : 2022-02-01 13:55:54,887 [INFO    ] Calculate Enrichment Score for Sample: 17-055 
+LINE 762 : 2022-02-01 13:55:54,888 [INFO    ] Calculate Enrichment Score for Sample: 17-057 
+LINE 762 : 2022-02-01 13:55:54,888 [INFO    ] Calculate Enrichment Score for Sample: 17-058 
+LINE 762 : 2022-02-01 13:55:54,889 [INFO    ] Calculate Enrichment Score for Sample: 17-060 
+LINE 762 : 2022-02-01 13:55:54,889 [INFO    ] Calculate Enrichment Score for Sample: 17-061 
+LINE 796 : 2022-02-01 13:55:54,891 [INFO    ] Congratulations. GSEApy runs successfully................
 

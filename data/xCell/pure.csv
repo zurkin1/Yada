@@ -1,4 +1,4 @@
-gene,endothelial.cells,fibroblasts,macrophages,NK.cells,memory.B.cells,memory.CD4.T.cells,memory.CD8.T.cells,monocytes,myeloid.dendritic.cells,naive.B.cells,naive.CD4.T.cells,naive.CD8.T.cells,neutrophils,regulatory.T.cells
+gene,endothelial.cells,fibroblasts,macrophages,NK cells,Memory B-cells,CD4+ Tcm,CD8+ Tcm,Monocytes,myeloid.dendritic.cells,naive B-cells,CD4+ naive T-cells,CD8+ naive T-cells,neutrophils,Tregs
 TTC38,0,0,28.1025,464.11499,16.13515625,20.489771,72.80024025,23.72108242,20.67578375,19.34253613,16.46657588,17.471983,16.83838825,23.549896
 OSGIN1,0,0,0,0.6979905,0.65841775,0.2638,0.277583675,14.81767108,1.79131125,0.491821875,0.59115275,0.389728425,4.822270046,0.23134675
 CXCR2P1,0,0,4.0575,0.582706,4.230580375,0.473972775,0.03812015,98.8820805,11.77282885,4.492887375,0,0.254807,3.4877975,0.063954025

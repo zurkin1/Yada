@@ -1,0 +1,17 @@
+,tumor-mcf7,cafs-hs,normal_breast,lymphocytes
+Mixture_Sample_1,85,5,5,5
+Mixture_Sample_2,85,9,3,3
+Mixture_Sample_3,85,3,9,3
+Mixture_Sample_4,85,3,3,9
+Mixture_Sample_5,70,10,10,10
+Mixture_Sample_6,70,15,10,5
+Mixture_Sample_7,70,15,5,10
+Mixture_Sample_8,70,10,15,5
+Mixture_Sample_9,70,10,5,15
+Mixture_Sample_10,70,5,15,10
+Mixture_Sample_11,70,5,10,15
+Mixture_Sample_12,55,15,15,15
+Mixture_Sample_13,55,30,10,5
+Mixture_Sample_14,55,30,5,10
+Mixture_Sample_15,55,10,30,5
+Mixture_Sample_16,55,10,5,30
