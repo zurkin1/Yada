@@ -10,7 +10,7 @@ Yada is an Python library for biological cell types deconvolution. Given gene ex
 
 ## Resources.
 - Paper: https://docs.google.com/document/d/1yi6vp7feRGyKNzubbEeLyBe-dNUmimTJ6k5KqmY_cMA/edit?usp=sharing.
-- ![Matrix decomposition](https://en.wikipedia.org/wiki/Matrix_decomposition)
+- Matrix decomposition https://en.wikipedia.org/wiki/Matrix_decomposition
 
 ## Pipeline.
 ![Yada Flow](/data/Yada.jpg)
