@@ -110,7 +110,7 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
 
     return np.max(O_array) - O_array #O_scaled.T #estimate_wt
 
-
+#SVR discovers a hyperplane that fits the maximal possible number of points within a constant distance ϵ, thus performing a regression.
 def cibersort(mix, pure):
     epsilon = 0.25
     # Standardize data.
@@ -172,7 +172,7 @@ def dsection(mix, pure, params):
     return(np.round(trace['p_'].mean(axis=0), 2).T)
 """
 
-
+#Lasso regression adds a regularization term to residual sum of squares (called L1 norm), it may set coefficients to 0 and therefore perform feature selection.
 def lasso(mix, pure, params):
     p = np.zeros([len(mix.columns), len(pure.columns)])
     i = 0
@@ -232,7 +232,8 @@ def nnls_deconv_constrained(mix, pure, params = None):
         i += 1
     return pd.DataFrame(data = result, index = mix.columns, columns = pure.columns)
 
-
+#Independent Components Analysis is written as in Eq. (2.1) maximizing independence and non-Gaussianity of columns. It was first formulated by Herault and Jutten (1986).
+#The independence can be measured with entropy, kurtosis, mutual information or negentropy measure.
 def ica_deconv(mix, pure, gene_list_df):
     # Use only differential meaningful genes.
     gene_list = pd.concat([gene_list_df.iloc[:, i] for i in range(len(gene_list_df.columns))]).values
