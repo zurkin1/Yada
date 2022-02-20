@@ -7,6 +7,8 @@ Yada is an Python library for biological cell types deconvolution. Given gene ex
 - Yada is one of the few deconvolution tools that are based on Python which is the lingua franca of data scientists today.
 - Availability: Can be run either as a Jupyter notebook or standalone script.
 
+## Overview.
+- Methods for deconvolution: https://urszulaczerwinska.github.io/UCzPhDThesis/.
 
 ## Pipeline.
 ![Yada Flow](/data/Yada.jpg)
