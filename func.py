@@ -16,6 +16,8 @@ from random import choice
 import similaritymeasures
 from similaritymeasures import pcm
 import gseapy as gp
+from singscore import *
+from tqdm import tqdm
 
 
 warnings.filterwarnings("ignore")
@@ -35,7 +37,9 @@ def basic_deconv(P, Q):
 
 
 def dtw_metric(P, Q):
-    fns = [metrics.dtw] #, similaritymeasures.dtw]
+    #fns = [metrics.dtw] #, similaritymeasures.dtw]
+    #P = P.sample(frac = 1)
+    #Q = Q[P.index]
     P1 = np.array([P.values, np.linspace(0, np.max(P), len(P))]) # np.arange(0, len(P))
     Q1 = np.array([Q.values, np.linspace(0, np.max(P), len(Q))])
     if (len(P) <= 5):
@@ -76,7 +80,7 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
             print('.', end="")
         else:
             max_column = pure_column
-        max_column.sort_values(ascending=False, inplace=True)
+        #max_column.sort_values(ascending=False, inplace=True)
 
         # Loop on all mixes.
         k = 0
@@ -103,12 +107,12 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
         i += 1
 
     #Scale to [0,1] in order for the sum of proportions to be meaningful. Scale along each cell.
-    #O_scaled = np.transpose(1 - minmax_scale(O_array, axis=1))
-    #solution = nnls(O_scaled, mixtures_sum)[0]
-    #solution_mat = np.diag(solution)
-    #estimate_wt = np.matmul(solution_mat, O_scaled.T)
+    O_scaled = np.transpose(1 - minmax_scale(O_array, axis=1))
+    solution = nnls(O_scaled, mixtures_sum)[0]
+    solution_mat = np.diag(solution)
+    estimate_wt = np.matmul(solution_mat, O_scaled.T)
 
-    return np.max(O_array) - O_array #O_scaled.T #estimate_wt
+    return estimate_wt
 
 #SVR discovers a hyperplane that fits the maximal possible number of points within a constant distance ϵ, thus performing a regression.
 def cibersort(mix, pure):
@@ -323,3 +327,44 @@ def pxcell(expr):
 
     scores = scores.apply(lambda x: spillOver(x), axis='rows')
     return scores
+
+
+def process_expr(expr, gene_sets):
+    for col in expr:
+        expr[col] = expr[col].rank()
+
+    ssg = gp.ssgsea(data=expr,
+            gene_sets=gene_sets, #gene_sets={'A':['gene1', 'gene2',...], 'B':['gene2', 'gene4',...],  ...}
+            #outdir='test/ssgsea_report',
+            sample_norm_method='custom', # choose 'custom' for your own rank list
+            permutation_num=0, # skip permutation procedure, because you don't need it
+            no_plot=True, # skip plotting, because you don't need these figures
+            processes=20,
+            seed=9,
+            scale=False)
+    return pd.DataFrame(ssg.resultsOnSamples)
+
+def msigdb(mix, pure):
+    score_mix = {}
+    score_pure = {}
+    gene_sets = {}
+
+    with open('./data/c8.all.v7.5.1.symbols.gmt') as f:
+        for line in tqdm(f):
+            key, val = line.split('\t', 1)
+            val = val.split()
+            val = [str.lower(i) for i in val]
+            score_mix[key] = score(val, mix).total_score.values
+            score_pure[key] = score(val, pure).total_score.values
+            gene_sets[key] = val
+
+    score_mix = pd.DataFrame(score_mix).T
+    score_mix.columns = mix.columns
+    score_mix.dropna(inplace=True)
+    #score_mix = process_expr(mix, gene_sets)
+    print('Score pure.')
+    score_pure = pd.DataFrame(score_pure).T
+    score_pure.columns = pure.columns
+    score_pure.dropna(inplace=True)
+    #score_pure = process_expr(pure, gene_sets)
+    return(cibersort(score_mix, score_pure))

@@ -1,28 +1,31 @@
-LINE 649 : 2022-02-01 13:55:53,694 [INFO    ] Parsing data files for ssGSEA...........................
-LINE 587 : 2022-02-01 13:55:53,694 [DEBUG   ] Input data is a DataFrame with gene names
-LINE 640 : 2022-02-01 13:55:53,695 [INFO    ] Use custom rank metric for ssGSEA
-LINE 138 : 2022-02-01 13:55:53,894 [INFO    ] 0443 gene_sets have been filtered out when max_size=2000 and min_size=15
-LINE 656 : 2022-02-01 13:55:53,894 [INFO    ] 0046 gene_sets used for further statistical testing.....
-LINE 660 : 2022-02-01 13:55:53,894 [INFO    ] Start to run ssGSEA...Might take a while................
-LINE 762 : 2022-02-01 13:55:54,877 [INFO    ] Calculate Enrichment Score for Sample: 17-002 
-LINE 762 : 2022-02-01 13:55:54,878 [INFO    ] Calculate Enrichment Score for Sample: 17-006 
-LINE 762 : 2022-02-01 13:55:54,880 [INFO    ] Calculate Enrichment Score for Sample: 17-019 
-LINE 762 : 2022-02-01 13:55:54,882 [INFO    ] Calculate Enrichment Score for Sample: 17-023 
-LINE 762 : 2022-02-01 13:55:54,882 [INFO    ] Calculate Enrichment Score for Sample: 17-026 
-LINE 762 : 2022-02-01 13:55:54,883 [INFO    ] Calculate Enrichment Score for Sample: 17-027 
-LINE 762 : 2022-02-01 13:55:54,883 [INFO    ] Calculate Enrichment Score for Sample: 17-030 
-LINE 762 : 2022-02-01 13:55:54,884 [INFO    ] Calculate Enrichment Score for Sample: 17-034 
-LINE 762 : 2022-02-01 13:55:54,884 [INFO    ] Calculate Enrichment Score for Sample: 17-040 
-LINE 762 : 2022-02-01 13:55:54,885 [INFO    ] Calculate Enrichment Score for Sample: 17-041 
-LINE 762 : 2022-02-01 13:55:54,885 [INFO    ] Calculate Enrichment Score for Sample: 17-042 
-LINE 762 : 2022-02-01 13:55:54,886 [INFO    ] Calculate Enrichment Score for Sample: 17-043 
-LINE 762 : 2022-02-01 13:55:54,886 [INFO    ] Calculate Enrichment Score for Sample: 17-045 
-LINE 762 : 2022-02-01 13:55:54,887 [INFO    ] Calculate Enrichment Score for Sample: 17-047 
-LINE 762 : 2022-02-01 13:55:54,887 [INFO    ] Calculate Enrichment Score for Sample: 17-054 
-LINE 762 : 2022-02-01 13:55:54,887 [INFO    ] Calculate Enrichment Score for Sample: 17-055 
-LINE 762 : 2022-02-01 13:55:54,888 [INFO    ] Calculate Enrichment Score for Sample: 17-057 
-LINE 762 : 2022-02-01 13:55:54,888 [INFO    ] Calculate Enrichment Score for Sample: 17-058 
-LINE 762 : 2022-02-01 13:55:54,889 [INFO    ] Calculate Enrichment Score for Sample: 17-060 
-LINE 762 : 2022-02-01 13:55:54,889 [INFO    ] Calculate Enrichment Score for Sample: 17-061 
-LINE 796 : 2022-02-01 13:55:54,891 [INFO    ] Congratulations. GSEApy runs successfully................
+LINE 649 : 2022-02-11 23:18:44,571 [INFO    ] Parsing data files for ssGSEA...........................
+LINE 587 : 2022-02-11 23:18:44,571 [DEBUG   ] Input data is a DataFrame with gene names
+LINE 640 : 2022-02-11 23:18:44,574 [INFO    ] Use custom rank metric for ssGSEA
+LINE 138 : 2022-02-11 23:19:08,394 [INFO    ] 0162 gene_sets have been filtered out when max_size=2000 and min_size=15
+LINE 656 : 2022-02-11 23:19:08,394 [INFO    ] 0538 gene_sets used for further statistical testing.....
+LINE 660 : 2022-02-11 23:19:08,410 [INFO    ] Start to run ssGSEA...Might take a while................
+LINE 762 : 2022-02-11 23:23:04,691 [INFO    ] Calculate Enrichment Score for Sample: mix0 
+LINE 762 : 2022-02-11 23:23:04,693 [INFO    ] Calculate Enrichment Score for Sample: mix1 
+LINE 762 : 2022-02-11 23:23:04,695 [INFO    ] Calculate Enrichment Score for Sample: mix2 
+LINE 762 : 2022-02-11 23:23:04,697 [INFO    ] Calculate Enrichment Score for Sample: mix3 
+LINE 762 : 2022-02-11 23:23:04,699 [INFO    ] Calculate Enrichment Score for Sample: mix4 
+LINE 762 : 2022-02-11 23:23:04,700 [INFO    ] Calculate Enrichment Score for Sample: mix5 
+LINE 762 : 2022-02-11 23:23:04,701 [INFO    ] Calculate Enrichment Score for Sample: mix6 
+LINE 762 : 2022-02-11 23:23:04,701 [INFO    ] Calculate Enrichment Score for Sample: mix7 
+LINE 762 : 2022-02-11 23:23:04,702 [INFO    ] Calculate Enrichment Score for Sample: mix8 
+LINE 762 : 2022-02-11 23:23:04,702 [INFO    ] Calculate Enrichment Score for Sample: mix9 
+LINE 796 : 2022-02-11 23:23:04,704 [INFO    ] Congratulations. GSEApy runs successfully................
+
+LINE 649 : 2022-02-11 23:23:04,773 [INFO    ] Parsing data files for ssGSEA...........................
+LINE 587 : 2022-02-11 23:23:04,773 [DEBUG   ] Input data is a DataFrame with gene names
+LINE 640 : 2022-02-11 23:23:04,773 [INFO    ] Use custom rank metric for ssGSEA
+LINE 138 : 2022-02-11 23:23:28,641 [INFO    ] 0000 gene_sets have been filtered out when max_size=2000 and min_size=15
+LINE 656 : 2022-02-11 23:23:28,641 [INFO    ] 0538 gene_sets used for further statistical testing.....
+LINE 660 : 2022-02-11 23:23:28,641 [INFO    ] Start to run ssGSEA...Might take a while................
+LINE 762 : 2022-02-11 23:25:28,048 [INFO    ] Calculate Enrichment Score for Sample: cell1 
+LINE 762 : 2022-02-11 23:25:28,050 [INFO    ] Calculate Enrichment Score for Sample: cell2 
+LINE 762 : 2022-02-11 23:25:28,054 [INFO    ] Calculate Enrichment Score for Sample: cell3 
+LINE 762 : 2022-02-11 23:25:28,055 [INFO    ] Calculate Enrichment Score for Sample: cell4 
+LINE 762 : 2022-02-11 23:25:28,057 [INFO    ] Calculate Enrichment Score for Sample: cell5 
+LINE 796 : 2022-02-11 23:25:28,061 [INFO    ] Congratulations. GSEApy runs successfully................
 

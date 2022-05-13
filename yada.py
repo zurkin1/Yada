@@ -30,7 +30,7 @@ def go_norm(expr):
 
 def calc_corr(metric, prop, platform, ens_estimate_wt_2):
     #real_weight = pd.read_csv('./data/Challenge/prop-' + prop, index_col=0).T
-    real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
+    real_weight = pd.read_csv(f'./scsim/data/{prop}-prop.csv', index_col=0).T
     both_mixes = list(set(ens_estimate_wt_2.index) & set(real_weight.index))
     ens_estimate_wt_2 = ens_estimate_wt_2.reindex(both_mixes)
     real_weight = real_weight.reindex(both_mixes)
@@ -45,7 +45,7 @@ def calc_corr(metric, prop, platform, ens_estimate_wt_2):
         if col in ens_estimate_wt_2.columns:
             pearson = np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]
             spearman = st.spearmanr(real_weight[col], ens_estimate_wt_2[col])
-            result.append([metric, prop, platform, col, pearson, spearman[0], spearman[1]])
+            result.append([metric, platform, col, pearson, spearman[0], spearman[1]])
     return result
 
 
@@ -54,15 +54,21 @@ def preprocess(mix, pure, GO = False):
     mix.index = mix.index.map(str.lower)
     mix.index = mix.index.map(str.strip)
     mix = mix.groupby(mix.index).first()
+    mix.fillna(0, inplace=True)
     if mix.max().max() < 20:
         mix = 2 ** mix
     num_mixes = len(mix.columns)
-    pure = pd.read_csv(pure, index_col=0)
+    pure = pd.read_csv(pure, index_col=0).iloc[:,:6]
     pure.index = pure.index.map(str.lower)
     pure.index = pure.index.map(str.strip)
     pure = pure.groupby(pure.index).first()
+    pure.fillna(0, inplace=True)
     if pure.max().max() < 20:
         pure = 2 ** pure
+
+    #TPM.
+    mix = mix*10000/mix.sum()
+    pure = pure*10000/pure.sum()
 
     #Drop genes that are not shared by mix and pure.
     both_genes = list(set(mix.index) & set(pure.index))  # - set(BRCA)
@@ -84,14 +90,13 @@ def preprocess(mix, pure, GO = False):
 
     if GO:
         mix = go_norm(mix)
-        #pure = go_norm(pure)
+        pure = go_norm(pure)
 
     return(mix, pure, gene_list_df)
 
 
-def run_dtw_deconv(mix, pure):
+def run_dtw_deconv(mix, pure, gene_list_df, metric = 'dtw'):
     #metrics = ['dtw', 'avg' , 'abs', 'ks', 'euclid', 'taxi'] #'basic',
-    metric = 'dtw'
     num_loops = 1
     #pool = mp.Pool()
     num_mixes = len(mix.columns)
@@ -110,36 +115,34 @@ def run_dtw_deconv(mix, pure):
     #pool.close()
     return(ens_estimate_wt)
 
-
 """
 if __name__ == '__main__':
     infiles = pd.read_csv('./data/Challenge/input1.csv')
-    result = pd.DataFrame([['a', 'b', 'c', 0.0, 0.0, 0.0]]*2)
+    result = pd.DataFrame()
     for line in infiles.iterrows():
-        file = line[1]['dataset.name'] + '.csv'
+        mix = './data/Challenge/mix-' + line[1]['dataset.name'] + '.csv'
+        pure = './data/Challenge/pure-' + line[1]['dataset.name'] + '.csv'
         platform = line[1]['type']
         num_cells = str(line[1]['cells'])
         #pure = './data/' + platform + '_' + num_cells + '.csv'
-        mix, pure, gene_list_df = preprocess(file)
-        for metric in ['dtw']: #, 'avg', 'abs', 'basic', 'ks', 'euclid', 'taxi']:
-            print(metric, file, ' ', end="")
-            res = run_deconv(mix, pure, gene_list_df, metric)
-            res = pd.DataFrame(calc_corr(metric, file, platform, res))
+        mix, pure, gene_list_df = preprocess(mix, pure)
+        for metric in ['dtw', 'avg']: #, 'abs', 'basic', 'ks', 'euclid', 'taxi']:
+            print(metric, line[1]['dataset.name'], ' ', end="")
+            res = run_dtw_deconv(mix, pure, gene_list_df, metric)
+            res = pd.DataFrame(calc_corr(metric, line[1]['dataset.name'], platform, res))
             result = pd.concat([result, res])
         #print(result.loc[result[0] == metric].describe())
-            result.to_csv('./data/result.csv')
+        result.to_csv('./data/result.csv')
 """
-
 
 if __name__ == '__main__':
     result = pd.DataFrame()
-    for file in ['xCell', 'Mysort', 'ABIS']: #, 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
-        for GO in [False, True]:
-            mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv', GO)
-            print(file, GO) #f'num_cells: {len(pure.columns)}, num_mixes: {len(mix.columns)}')
-            for method in [cibersort, nnls_deconv_constrained]:
-                res = method(mix, pure)
-                file_res = pd.DataFrame(calc_corr(method.__name__, file, GO, res))
-                result = pd.concat([result, file_res])
-
+    for file in range(0, 20): #['.']: #'xCell', 'Mysort', 'ABIS', 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
+        mix, pure, gene_list_df = preprocess(f'./scsim/data/{file}-mix.csv', f'./scsim/data/{file}-pure.csv')
+        for method in [run_dtw_deconv]:
+            print(file) #f'num_cells: {len(pure.columns)}, num_mixes: {len(mix.columns)}')
+            res = method(mix, pure, gene_list_df)
+            file_res = pd.DataFrame(calc_corr(method.__name__, file, '', res))
+            result = pd.concat([result, file_res])
+    print(result.set_index(2).iloc[:,1:5])
     result.to_csv('./data/result.csv')

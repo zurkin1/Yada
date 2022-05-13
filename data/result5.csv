@@ -1,0 +1,23 @@
+,0,1,2,3,4,5,6
+0,msigdb,xCell,,CD8+ T-cells,0.078624167,0.244398692,0.012408713
+1,msigdb,xCell,,CD4+ Tcm,-0.095101937,-0.091737638,0.35434633
+2,msigdb,xCell,,effector CD4+ T cells,0.034989229,0.13498422,0.1718767
+3,msigdb,xCell,,CD8+ Tem,-0.028086031,0.001448805,0.988354172
+4,msigdb,xCell,,Memory B-cells,0.365632917,0.148567288,0.132285643
+5,msigdb,xCell,,Monocytes,0.598059064,0.572679236,2.13E-10
+6,msigdb,xCell,,naive B-cells,0.504765262,0.515668424,2.12E-08
+7,msigdb,xCell,,CD4+ naive T-cells,-0.181832976,-0.195342096,0.046898302
+8,msigdb,xCell,,CD8+ naive T-cells,-0.181621635,-0.175781597,0.074279662
+9,msigdb,xCell,,NK cells,0.127804485,0.191342252,0.051684826
+10,msigdb,xCell,,Tregs,-0.118640713,-0.071529551,0.470559044
+0,nnls_deconv_constrained,xCell,,CD8+ T-cells,-0.124451831,-0.080554488,0.416280434
+1,nnls_deconv_constrained,xCell,,CD4+ Tcm,-0.060682562,0.009378076,0.924724575
+2,nnls_deconv_constrained,xCell,,effector CD4+ T cells,-0.025645212,-0.183688475,0.061966257
+3,nnls_deconv_constrained,xCell,,CD8+ Tem,0.050238039,-0.033368698,0.73666269
+4,nnls_deconv_constrained,xCell,,Memory B-cells,-0.029602127,0.021999358,0.824574225
+5,nnls_deconv_constrained,xCell,,Monocytes,0.307241521,0.103819821,0.294270426
+6,nnls_deconv_constrained,xCell,,naive B-cells,-0.043677991,0.041930493,0.672567726
+7,nnls_deconv_constrained,xCell,,CD4+ naive T-cells,0.197033346,0.003239316,0.973965267
+8,nnls_deconv_constrained,xCell,,CD8+ naive T-cells,-0.129855415,-0.032895084,0.740266402
+9,nnls_deconv_constrained,xCell,,NK cells,0.044930944,0.00100168,0.991948119
+10,nnls_deconv_constrained,xCell,,Tregs,0.11049201,0.107970518,0.275284999
