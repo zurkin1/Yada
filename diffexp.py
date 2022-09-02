@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.special import comb
-from tslearn import metrics
+#from tslearn import metrics
 
 
 # Given a mixture and a sorted list of genes, check if expression levels are in the same order.

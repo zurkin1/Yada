@@ -13,11 +13,12 @@ import logging
 import warnings
 import random
 from random import choice
-import similaritymeasures
-from similaritymeasures import pcm
-import gseapy as gp
-from singscore import *
-from tqdm import tqdm
+#mport similaritymeasures
+#from similaritymeasures import pcm
+#import gseapy as gp
+#from singscore import *
+#from tqdm import tqdm
+import multiprocessing as mp
 
 
 warnings.filterwarnings("ignore")
@@ -52,7 +53,7 @@ def dtw_metric(P, Q):
 
 
 # This function calculate a deconvolution algorithm using DTW ditance and DSA algorithm.
-def dtw_deconv(mix, pure, gene_list_df, metric):
+def dtw_deconv(mix, pure, gene_list_df, metric='dtw'):
     #mix[mix < 0] = 0
     gene_list_df.replace(["NaN", 'NaN', 'nan'], np.nan, inplace=True)
     num_cells = len(pure.columns)
@@ -65,7 +66,7 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
     for cell_type in pure:
         cell_vals = []
         #gene_list_df[cell_type] = gene_list_df[cell_type].map(str.lower)
-        cell_genelist = gene_list_df[cell_type].dropna() #.sample(frac=0.85) # round(random.gauss(0.4, 0.03), 2))  # 0.35
+        cell_genelist = gene_list_df[cell_type].dropna().sample(frac=0.35) # round(random.gauss(0.4, 0.03), 2))  # 0.35
         #If marker list or sample list is short, don't sample.
         if (len(gene_list_df[cell_type].dropna()) < 8):  # or (len(cell_genelist) < 5)
             cell_genelist = gene_list_df[cell_type].dropna()
@@ -111,11 +112,34 @@ def dtw_deconv(mix, pure, gene_list_df, metric):
     solution = nnls(O_scaled, mixtures_sum)[0]
     solution_mat = np.diag(solution)
     estimate_wt = np.matmul(solution_mat, O_scaled.T)
-
+    #estimate_wt = pd.DataFrame(data=estimate_wt, index=pure.columns).T
+    #estimate_wt.index = mix.columns
     return estimate_wt
 
+
+def run_dtw_deconv_ensemble(mix, pure, gene_list_df, metric = 'dtw'):
+    #metrics = ['dtw', 'avg' , 'abs', 'ks', 'euclid', 'taxi'] #'basic',
+    num_loops = 400
+    pool = mp.Pool()
+    num_mixes = len(mix.columns)
+    num_cells = len(pure.columns)
+    ens_estimate_wt = np.zeros((num_cells, num_mixes))
+    
+    results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df, metric)) for i in range(num_loops)]
+    #results = [dtw_deconv(mix, pure, gene_list_df, metric) for i in range(num_loops)]
+    for ens_i in range(num_loops):
+        print('\r', f"{ens_i / num_loops * 100:.0f}%", end='')
+        ens_estimate_wt += results[ens_i].get()
+    ens_estimate_wt /= num_loops
+    ens_estimate_wt = pd.DataFrame(data=ens_estimate_wt, index=pure.columns).T
+    ens_estimate_wt.index = mix.columns
+    #ens_estimate_wt.to_csv('./data/results.csv')
+    pool.close()
+    return(ens_estimate_wt)
+
+
 #SVR discovers a hyperplane that fits the maximal possible number of points within a constant distance ϵ, thus performing a regression.
-def cibersort(mix, pure):
+def cibersort(mix, pure, gene_list_df):
     epsilon = 0.25
     # Standardize data.
     #mix = (mix - mix.mean()) / mix.std()
