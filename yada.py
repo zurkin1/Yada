@@ -54,7 +54,7 @@ def preprocess(mix, pure, GO = False):
 
 if __name__ == '__main__':
     result = pd.DataFrame()
-    for file in ['xCell', 'Mysort', 'ABIS', 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
+    for file in ['xCell', 'ABIS', 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
         mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
         for method in [run_dtw_deconv_ensemble, cibersort]:
             print(file)

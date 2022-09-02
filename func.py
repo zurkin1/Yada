@@ -76,12 +76,12 @@ def dtw_deconv(mix, pure, gene_list_df, metric='dtw'):
         max_ind = mix_temp.mean().idxmax()  # Mix with maximum mean of gene expression.
         pure_temp = pure.loc[cell_genelist]
         pure_column = pure_temp[cell_type].copy()
-        if mix_temp.max().max() > 2*pure_temp.max().max():
-            max_column = mix_temp[max_ind].copy()
-            print('.', end="")
-        else:
-            max_column = pure_column
-        #max_column.sort_values(ascending=False, inplace=True)
+        #if mix_temp.max().max() > 2*pure_temp.max().max():
+        #    max_column = mix_temp[max_ind].copy()
+            #print('.', end="")
+        #else:
+        max_column = pure_column
+        max_column.sort_values(ascending=False, inplace=True)
 
         # Loop on all mixes.
         k = 0
@@ -91,7 +91,7 @@ def dtw_deconv(mix, pure, gene_list_df, metric='dtw'):
             if metric == 'dtw':
                 dist = dtw_metric(max_column, column)  # 0.342
             elif metric == 'avg':
-                dist = max_column.mean() - column.mean()
+                dist = np.mean(max_column - column)
             elif metric == 'abs':
                 dist = np.mean(abs(max_column.values - column.values))
             elif metric == 'basic':
