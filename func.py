@@ -15,7 +15,7 @@ import random
 from random import choice
 #mport similaritymeasures
 #from similaritymeasures import pcm
-#import gseapy as gp
+import gseapy as gp
 #from singscore import *
 #from tqdm import tqdm
 import multiprocessing as mp
@@ -282,8 +282,9 @@ def ica_deconv(mix, pure, gene_list_df):
 
 
 def pxcell(expr):
-    expr = pd.read_csv(expr, index_col=0)
+    #expr = pd.read_csv(expr, index_col=0)
     # Reduce the expression dataset to contain only the required genes
+    expr.index = expr.index.map(str.lower)
     genes = pd.read_csv('./data/xCell/genes.csv', index_col=0)
     genes['x'] = genes.x.map(str.lower)
     expr = expr.loc[expr.index.intersection(list(genes.x))]
@@ -392,3 +393,9 @@ def msigdb(mix, pure):
     score_pure.dropna(inplace=True)
     #score_pure = process_expr(pure, gene_sets)
     return(cibersort(score_mix, score_pure))
+
+
+if __name__ == '__main__':
+    mix = pd.read_csv('./data/xCell/chicago.csv', index_col=0)
+    result = pxcell(mix)
+    result.to_csv('./data/xCell/results.csv')
