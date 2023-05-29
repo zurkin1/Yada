@@ -116,15 +116,15 @@ def dtw_deconv(mix, pure, gene_list_df, metric='dtw'):
     return estimate_wt
 
 
-def run_dtw_deconv_ensemble(mix, pure, gene_list_df, metric = 'dtw'):
+def run_dtw_deconv_ensemble(mix, pure, gene_list_df):
     num_loops = 400
     pool = mp.Pool()
     num_mixes = len(mix.columns)
     num_cells = len(pure.columns)
     ens_estimate_wt = np.zeros((num_cells, num_mixes))
     
-    results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df, metric)) for i in range(num_loops)]
-    #results = [dtw_deconv(mix, pure, gene_list_df, metric) for i in range(num_loops)]
+    results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df)) for i in range(num_loops)]
+    #results = [dtw_deconv(mix, pure, gene_list_df) for i in range(num_loops)]
     for ens_i in range(num_loops):
         print('\r', f"{ens_i / num_loops * 100:.0f}%", end='')
         ens_estimate_wt += results[ens_i].get()
@@ -136,7 +136,7 @@ def run_dtw_deconv_ensemble(mix, pure, gene_list_df, metric = 'dtw'):
     return(ens_estimate_wt)
 
 
-def calc_corr(metric, prop, ens_estimate_wt_2):
+def calc_corr(prop, ens_estimate_wt_2):
     real_weight = pd.read_csv(f'./data/{prop}/labels.csv', index_col=0)
     both_mixes = list(set(ens_estimate_wt_2.index) & set(real_weight.index))
     ens_estimate_wt_2 = ens_estimate_wt_2.reindex(both_mixes)
@@ -146,7 +146,7 @@ def calc_corr(metric, prop, ens_estimate_wt_2):
         if col in ens_estimate_wt_2.columns:
             pearson = np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]
             spearman = st.spearmanr(real_weight[col], ens_estimate_wt_2[col])
-            result.append([metric, prop, col, pearson, spearman[0], spearman[1]])
+            result.append([col, pearson, spearman[0], spearman[1]])
     return result
 
 
@@ -159,7 +159,7 @@ def preprocess(mix, pure):
     if mix.max().max() < 20:
         mix = 2 ** mix
     num_mixes = len(mix.columns)
-    pure = pd.read_csv(pure, index_col=0).iloc[:,:6]
+    pure = pd.read_csv(pure, index_col=0)
     pure.index = pure.index.map(str.lower)
     pure.index = pure.index.map(str.strip)
     pure = pure.groupby(pure.index).first()
