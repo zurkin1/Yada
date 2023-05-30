@@ -52,7 +52,7 @@ def dtw_metric(P, Q):
 
 
 # This function calculate a deconvolution algorithm using DTW ditance and DSA algorithm.
-def dtw_deconv(mix, pure, gene_list_df, metric='dtw'):
+def dtw_deconv(pure, mix, gene_list_df, metric='dtw'):
     #mix[mix < 0] = 0
     gene_list_df.replace(["NaN", 'NaN', 'nan'], np.nan, inplace=True)
     num_cells = len(pure.columns)
@@ -116,15 +116,15 @@ def dtw_deconv(mix, pure, gene_list_df, metric='dtw'):
     return estimate_wt
 
 
-def run_dtw_deconv_ensemble(mix, pure, gene_list_df):
+def run_dtw_deconv_ensemble(pure, mix, gene_list_df):
     num_loops = 400
     pool = mp.Pool()
     num_mixes = len(mix.columns)
     num_cells = len(pure.columns)
     ens_estimate_wt = np.zeros((num_cells, num_mixes))
     
-    results = [pool.apply_async(dtw_deconv, args=(mix, pure, gene_list_df)) for i in range(num_loops)]
-    #results = [dtw_deconv(mix, pure, gene_list_df) for i in range(num_loops)]
+    results = [pool.apply_async(dtw_deconv, args=(pure, mix, gene_list_df)) for i in range(num_loops)]
+    #results = [dtw_deconv(pure, mix, gene_list_df) for i in range(num_loops)]
     for ens_i in range(num_loops):
         print('\r', f"{ens_i / num_loops * 100:.0f}%", end='')
         ens_estimate_wt += results[ens_i].get()
@@ -146,11 +146,11 @@ def calc_corr(prop, ens_estimate_wt_2):
         if col in ens_estimate_wt_2.columns:
             pearson = np.corrcoef(real_weight[col], ens_estimate_wt_2[col])[0][1]
             spearman = st.spearmanr(real_weight[col], ens_estimate_wt_2[col])
-            result.append([col, pearson, spearman[0], spearman[1]])
+            result.append([prop, col, pearson, spearman[0], spearman[1]])
     return result
 
 
-def preprocess(mix, pure):
+def preprocess(pure, mix):
     mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)
     mix.index = mix.index.map(str.strip)
@@ -172,24 +172,23 @@ def preprocess(mix, pure):
     pure = pure.reindex(both_genes)
     mix = mix.reindex(both_genes)
 
-    # Gene differentiation algorithm.
-    gene_list_df = gene_diff(pure, mix)
-
     #Standardize.
     mix = (mix-mix.min())/mix.mean() #mix.apply(lambda x: (x-x.mean())/(x.std()), axis=1) #+1e-16
     pure = (pure-pure.min())/pure.mean() #pure.apply(lambda x: (x-x.mean())/(x.std()), axis=1)
 
-    return(mix, pure, gene_list_df)
+    return(pure, mix)
 
 
 if __name__ == '__main__':
+    #Benchmark of running deconvolution of few datasets.
     result = pd.DataFrame()
     for file in ['xCell', 'ABIS', 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
-        mix, pure, gene_list_df = preprocess(f'./data/{file}/mix.csv', f'./data/{file}/pure.csv')
-        for method in [run_dtw_deconv_ensemble]:
-            print(file)
-            res = method(mix, pure, gene_list_df)
-            file_res = pd.DataFrame(calc_corr(method.__name__, file, res))
-            result = pd.concat([result, file_res])
-    #print(result.set_index(2).iloc[:,1:5])
+        pure, mix = preprocess(f'./data/{file}/pure.csv', f'./data/{file}/mix.csv')
+        gene_list_df = gene_diff(pure, mix)
+        print(file)
+        res = run_dtw_deconv_ensemble(pure, mix, gene_list_df)
+        file_res = pd.DataFrame(calc_corr(file, res))
+        result = pd.concat([result, file_res])
+    result.columns = ['dataset', 'celltype', 'pearson', 'spearman', 'p']
+    print(result) #.set_index(2).iloc[:,1:5])
     result.to_csv('./data/result.csv')
