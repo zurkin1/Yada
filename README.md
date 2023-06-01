@@ -26,5 +26,5 @@ Yada is an Python library for biological cell types deconvolution. Given a gene 
 - Yada performs a marker gene selection algorithm and therefore typically does not use all genes in the signature matrix.
 
 ## Sample Notebook.
-![Using reference matrix](Yada.ipynb)
-![Using only marker list](Yada-only_markers.ipynb)
+- [Using reference matrix](Yada.ipynb)
+- [Using only marker list](Yada-only_markers.ipynb)
