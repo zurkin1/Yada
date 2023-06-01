@@ -54,7 +54,7 @@ def dtw_metric(P, Q):
 # This function calculate a deconvolution algorithm using DTW ditance and DSA algorithm.
 def dtw_deconv(pure, mix, gene_list_df, metric='dtw'):
     #mix[mix < 0] = 0
-    gene_list_df.replace(["NaN", 'NaN', 'nan'], np.nan, inplace=True)
+    gene_list_df.replace(["NaN", 'NaN', 'nan', ''], np.nan, inplace=True)
     num_cells = len(pure.columns)
     num_mixes = len(mix.columns)
     #mixtures_sum = [round(1 - abs(random.gauss(0, 0.045)), 2) for i in range(num_mixes)]
@@ -73,13 +73,13 @@ def dtw_deconv(pure, mix, gene_list_df, metric='dtw'):
         cell_genelist = list(set(mix.index) & set(cell_genelist))
         mix_temp = mix.loc[cell_genelist]
         max_ind = mix_temp.mean().idxmax()  # Mix with maximum mean of gene expression.
-        pure_temp = pure.loc[cell_genelist]
-        pure_column = pure_temp[cell_type].copy()
+        #pure_temp = pure.loc[cell_genelist]
+        #pure_column = pure_temp[cell_type].copy()
         #if mix_temp.max().max() > 2*pure_temp.max().max():
-        #    max_column = mix_temp[max_ind].copy()
+        max_column = mix_temp[max_ind].copy()
             #print('.', end="")
         #else:
-        max_column = pure_column
+        #max_column = pure_column
         max_column.sort_values(ascending=False, inplace=True)
 
         # Loop on all mixes.
@@ -149,6 +149,32 @@ def calc_corr(prop, ens_estimate_wt_2):
             result.append([prop, col, pearson, spearman[0], spearman[1]])
     return result
 
+def preprocess_only_marker(pure, mix):
+    mix = pd.read_csv(mix, index_col=0)
+    mix.index = mix.index.map(str.lower)
+    mix.index = mix.index.map(str.strip)
+    mix = mix.groupby(mix.index).first()
+    mix.fillna(0, inplace=True)
+    if mix.max().max() < 20:
+        mix = 2 ** mix
+    num_mixes = len(mix.columns)
+	
+    pure = pd.read_csv(pure, index_col=0)
+    for col in pure.columns:
+       pure[col] = [str.lower(word) if word is not np.nan else '' for word in pure[col]]
+
+    #Standardize.
+    mix = (mix-mix.min())/mix.mean() #mix.apply(lambda x: (x-x.mean())/(x.std()), axis=1) #+1e-16
+	
+    pure_genes = set()
+    for i in range(pure.values.shape[0]):
+      pure_genes = pure_genes.union(set(pure.values[i]))
+    both_genes = list(set(mix.index) & pure_genes)
+    mix = mix.reindex(both_genes)
+    for col in pure.columns:
+       pure[col] = [word if word in both_genes else '' for word in pure[col]]
+    return(pure, mix)
+
 
 def preprocess(pure, mix):
     mix = pd.read_csv(mix, index_col=0)
@@ -182,7 +208,7 @@ def preprocess(pure, mix):
 if __name__ == '__main__':
     #Benchmark of running deconvolution of few datasets.
     result = pd.DataFrame()
-    for file in ['xCell', 'ABIS', 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
+    for file in ['ABIS', 'GSE123604', '10x', 'CIBERSORT', 'EPIC', 'TIMER', 'Abbas', 'BreastBlood', 'DeconRNASeq', 'DSA', 'RatBrain']:
         pure, mix = preprocess(f'./data/{file}/pure.csv', f'./data/{file}/mix.csv')
         gene_list_df = gene_diff(pure, mix)
         print(file)
@@ -190,5 +216,5 @@ if __name__ == '__main__':
         file_res = pd.DataFrame(calc_corr(file, res))
         result = pd.concat([result, file_res])
     result.columns = ['dataset', 'celltype', 'pearson', 'spearman', 'p']
-    print(result) #.set_index(2).iloc[:,1:5])
+    print(result)
     result.to_csv('./data/result.csv')

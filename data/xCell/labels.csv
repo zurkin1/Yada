@@ -1,4 +1,4 @@
-,B-cells,CD16- monocytes,CD16+ monocytes,CD4+ T-cells,CD8+ T-cells,CD4+ Tcm,CD8+ Tcm,effector CD4+ T cells,effector CD8+ T cells,CD4+ Tem,CD8+ Tem,Tgd cells,lymphocytes,Memory B-cells,Monocytes,naive B-cells,CD4+ naive T-cells,CD8+ naive T-cells,NK cells,NKT,Plasma cells,T cells,pro B-cells,Tregs
+,B-cells,CD16- monocytes,CD16+ monocytes,CD4+ T-cells,CD8+ T-cells,CD4+ Effector Tcm,CD8+ Effector Tcm,CD4+ Tem,CD8+ Tem,CD4+ Tem,CD8+ Tem,Tgd cells,lymphocytes,Memory B-cells,Monocytes,naive B-cells,CD4+ naive T-cells,CD8+ naive T-cells,NK cells,NKT,Plasma cells,T cells,pro B-cells,Tregs
 SUB116449,0.131,0.1339,0.0032,0.3187,0.0491,0.1609,0.0075,0.0124,0.0074,0.072,0.0186,0.0141,0.8594,0.0092,0.1369,0.1188,0.0734,0.0156,0.0141,0.0053,4.00E-04,0.5521,9.00E-04,0.0098
 SUB134237,0.0685,0.0476,0.001,0.3085,0.1822,0.1646,0.0081,0.0026,0.0431,0.0361,0.0555,0.0329,0.9505,0.0049,0.0486,0.062,0.1052,0.0756,0.0868,0.0262,3.00E-04,0.6617,3.00E-04,0.0258
 SUB134238,0.0914,0.1771,0.0061,0.3329,0.0613,0.0693,0.015,0.0359,0.0085,0.043,0.0221,0.0127,0.8048,0.009,0.184,0.0788,0.1846,0.0157,0.0853,0.0152,0.0012,0.4893,0.0012,0.0143
