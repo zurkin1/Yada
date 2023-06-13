@@ -28,3 +28,5 @@ Yada is an Python library for biological cell types deconvolution. Given a gene 
 ## Sample Notebook.
 - [Using reference matrix](Yada.ipynb)
 - [Using only marker list](Yada-only_markers.ipynb)
+
+Support: zurkin at gmail dot com.
