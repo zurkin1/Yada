@@ -1,7 +1,13 @@
 # Yada Deconvolution Package
 ![Yada Flow](/data/Yada.jpg)
 
-Yada is a Python library designed for deconvoluting mixed gene expression data to estimate cell type proportions. Deconvolution algorithms leverage the expression signature of pure cell populations to quantify their relative abundances in complex, heterogeneous samples. Yada implements two approaches:
+Yada is a new biological deconvoltion algorithm that my partner and I developed as part of my PhD research in the Systems Biomedicine Lab under the supervision of Professor Efroni. It is designed to estimate the proportions of distinct cell types within complex, heterogeneous gene expression samples. 
+
+The key premise behind Yada is that the transcriptomic signature of pure cell populations can be leveraged to deconvolute mixed profiles and quantify the relative abundance of each cell type. By analyzing gene expression patterns, deconvolution algorithms computationally unravel these complex cellular mixtures. 
+
+Yada implements a robust approach to perform this deconvolution, accurately estimating immune and other cell type fractions from bulk transcriptomic data. It represents a novel contribution stemming from my doctoral studies focused on advancing computational methods for dissecting complex systems-level biomedical data. Under Professor Efroni's mentorship, we were able to design, validate and optimize Yada to address an important need in the field of computational immunology.
+
+Yada implements two approaches:
 
 1) Marker-based deconvolution using curated gene signatures representative of each cell type. 
 
