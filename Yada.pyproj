@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{67062996-f445-42d4-9443-09356ee7133b}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>code\YADA.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>Global|PythonCore|3.11</InterpreterId>
+    <InterpreterArguments>
+    </InterpreterArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <CommandLineArguments>s</CommandLineArguments>
+    <IsWindowsApplication>True</IsWindowsApplication>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="code\diffexp.py" />
+    <Compile Include="code\YADA.py" />
+    <Compile Include="data\xCell\signature.py" />
+    <Compile Include="tools\scsim\.ipynb_checkpoints\run_scsim-checkpoint.py" />
+    <Compile Include="tools\scsim\run_multi_scsim.py" />
+    <Compile Include="tools\scsim\run_scsim.py" />
+    <Compile Include="tools\scsim\scsim.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\Challenge\V1.2-fine-grained.png" />
+    <Content Include="data\Challenge\V1.3-coarse-grained-aggregated.png" />
+    <Content Include="data\sim\assays.csv" />
+    <Content Include="data\sim\celldata.csv" />
+    <Content Include="data\sim\dedata.csv" />
+    <Content Include="data\sim\labels.csv" />
+    <Content Include="data\sim\markers.csv" />
+    <Content Include="data\sim\mix.csv" />
+    <Content Include="data\sim\prop.csv" />
+    <Content Include="data\sim\pure.csv" />
+    <Content Include="data\sim\resultsmix.csv" />
+    <Content Include="data\sim\resultspure.csv" />
+    <Content Include="data\sim\splater.csv" />
+    <Content Include="data\test.html" />
+    <Content Include="data\xCell\signatures.txt" />
+    <Content Include="data\Yada.jpg" />
+    <Content Include="tools\Rplot.png" />
+    <Content Include="tools\Rplot2.png" />
+    <Content Include="tools\scsim\data\filtered_counts.txt" />
+    <Content Include="tools\scsim\data\groundtruth_cellparams.txt" />
+    <Content Include="tools\scsim\data\groundtruth_geneparams.txt" />
+    <Content Include="tools\scsim\data\tsne.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="code" />
+    <Folder Include="data" />
+    <Folder Include="data\Challenge" />
+    <Folder Include="data\sim\" />
+    <Folder Include="data\xCell" />
+    <Folder Include="tools" />
+    <Folder Include="tools\scsim" />
+    <Folder Include="tools\scsim\.ipynb_checkpoints" />
+    <Folder Include="tools\scsim\data" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.11" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

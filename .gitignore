@@ -1,0 +1,15 @@
+
+.vs/ProjectSettings.json
+*.json
+*.vsidx
+*.sqlite
+.vs/Yada/v17/.suo
+.vs/Yada/v17/.wsuo
+code/.vs/YADA/v17/.suo
+code/.vs/YADA/v17/.wsuo
+*.bin
+*.pyc
+code/env/*
+data/sim/assays.csv
+data/sim/results - Copy.csv
+data/sim/splater.csv
