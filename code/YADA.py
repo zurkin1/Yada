@@ -14,7 +14,7 @@ import random
 from random import choice
 #mport similaritymeasures
 #from similaritymeasures import pcm
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import multiprocessing as mp
 import sys
 import cProfile
@@ -122,7 +122,7 @@ def run_dtw_deconv_ensemble(pure, mix, gene_list_df):
     
     results = [pool.apply_async(dtw_deconv, args=(pure, mix, gene_list_df)) for i in range(num_loops)]
     #results = [dtw_deconv(pure, mix, gene_list_df) for i in range(num_loops)]
-    for ens_i in range(num_loops):
+    for ens_i in tqdm(range(num_loops)):
         logger.log(logging.DEBUG, '\r', f"{ens_i / num_loops * 100:.0f}%", end='')
         ens_estimate_wt += results[ens_i].get()
     ens_estimate_wt /= num_loops
@@ -134,10 +134,11 @@ def run_dtw_deconv_ensemble(pure, mix, gene_list_df):
 
 
 def calc_corr(prop, ens_estimate_wt_2):
-    real_weight = pd.read_csv(FULL_PATH + f'{prop}/labels.csv', index_col=0)
-    results = pd.read_csv(FULL_PATH + f'{prop}/results.csv')
+    real_weight = pd.read_csv(FULL_PATH + f'{prop}/labels.csv', index_col=0) #Ground truth.
+    #results = pd.read_csv(FULL_PATH + f'{prop}/results.csv') #Previous run results. Needed for the simulation.
+    results = pd.DataFrame(columns=[prop, 'celltype', 'Pearson', 'Spearman', 'p']) #Previous run results. Needed for the simulation.
     both_mixes = list(set(ens_estimate_wt_2.index) & set(real_weight.index))
-    ens_estimate_wt_2 = ens_estimate_wt_2.reindex(both_mixes)
+    ens_estimate_wt_2 = ens_estimate_wt_2.reindex(both_mixes) #YADA results.
     real_weight = real_weight.reindex(both_mixes)
     for col in real_weight:
         if col in ens_estimate_wt_2.columns:
@@ -145,6 +146,7 @@ def calc_corr(prop, ens_estimate_wt_2):
             spearman = st.spearmanr(real_weight[col], ens_estimate_wt_2[col])
             results.loc[len(results)] = ([prop, col, pearson, spearman[0], spearman[1]])
     results.to_csv(FULL_PATH + f'{prop}/results.csv', index=None)
+    return results
 
 def preprocess_only_marker(pure, mix):
     mix = pd.read_csv(mix, index_col=0)
