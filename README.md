@@ -24,7 +24,6 @@ In summary, Yada provides an accessible, high-speed Python toolkit for accurate 
 
 ## Resources
 - Matrix decomposition https://en.wikipedia.org/wiki/Matrix_decomposition
-- Literature overview https://urszulaczerwinska.github.io/UCzPhDThesis/methods.html#literature-overview
 - Collection of papers https://github.com/changwn/Deconvolution_paper
 
 ## Dataset For Training
