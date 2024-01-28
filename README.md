@@ -1,26 +1,26 @@
-# Yada Deconvolution Package
+# YADA Deconvolution Package
 ![Yada Flow](/data/Yada.jpg)
 
-Yada is a new biological deconvoltion algorithm that my partner and I developed as part of my PhD research in the Systems Biomedicine Lab under the supervision of Professor Efroni. It is designed to estimate the proportions of distinct cell types within complex, heterogeneous gene expression samples. 
+YADA is a new biological deconvoltion algorithm that my partner and I developed as part of my PhD research in the Systems Biomedicine Lab under the supervision of Professor Efroni. It is designed to estimate the proportions of distinct cell types within complex, heterogeneous gene expression samples. 
 
-The key premise behind Yada is that the transcriptomic signature of pure cell populations can be leveraged to deconvolute mixed profiles and quantify the relative abundance of each cell type. By analyzing gene expression patterns, deconvolution algorithms computationally unravel these complex cellular mixtures. 
+The key premise behind YADA is that the transcriptomic signature of pure cell populations can be leveraged to deconvolute mixed profiles and quantify the relative abundance of each cell type. By analyzing gene expression patterns, deconvolution algorithms computationally unravel these complex cellular mixtures. 
 
-Yada implements a robust approach to perform this deconvolution, accurately estimating immune and other cell type fractions from bulk transcriptomic data. It represents a novel contribution stemming from my doctoral studies focused on advancing computational methods for dissecting complex systems-level biomedical data. Under Professor Efroni's mentorship, we were able to design, validate and optimize Yada to address an important need in the field of computational immunology.
+YADA implements a robust approach to perform this deconvolution, accurately estimating immune and other cell type fractions from bulk transcriptomic data. It represents a novel contribution stemming from my doctoral studies focused on advancing computational methods for dissecting complex systems-level biomedical data. Under Professor Efroni's mentorship, we were able to design, validate and optimize YADA to address an important need in the field of computational immunology.
 
-Yada implements two approaches:
+YADA implements two approaches:
 
 1) Marker-based deconvolution using curated gene signatures representative of each cell type. 
 
 2) Reference-based deconvolution utilizing a complete gene expression matrix from pure cell populations.
 
-Key features and innovations of Yada include:
-- High performance - Yada achieves state-of-the-art accuracy on benchmark datasets, as evidenced by top results in a recent challenge.
+Key features and innovations of YADA include:
+- High performance - YADA achieves state-of-the-art accuracy on benchmark datasets, as evidenced by top results in a recent challenge.
 - Flexibility - Works with either marker genes or full reference profiles.
 - Broad applicability - Core algorithm supports gene expression data from various sequencing platforms. 
 - Computational efficiency - Optimized parallel implementation allows rapid deconvolution of large datasets.
 - User-friendly Python API - One of the few deconvolution libraries natively implemented in Python.
 
-In summary, Yada provides an accessible, high-speed Python toolkit for accurate and flexible deconvolution of bulk gene expression data, facilitating estimation of immune and other cell type mixtures from sample transcriptomes. Its user-friendly interface, performance, and multifaceted capabilities make Yada ideally suited for computational immunology and systems biology applications.
+In summary, YADA provides an accessible, high-speed Python toolkit for accurate and flexible deconvolution of bulk gene expression data, facilitating estimation of immune and other cell type mixtures from sample transcriptomes. Its user-friendly interface, performance, and multifaceted capabilities make YADA ideally suited for computational immunology and systems biology applications.
 
 ## Resources
 - Matrix decomposition https://en.wikipedia.org/wiki/Matrix_decomposition
@@ -35,8 +35,9 @@ In summary, Yada provides an accessible, high-speed Python toolkit for accurate 
 - Gene symbols in column 1 of both files.
 - It is acceptable for some genes to be missing in either file. 
 - Data should be in non-log scale. If maximum expression value is <50, anti-log transform is applied. 
-- Yada implements internal marker gene selection - not all signature genes are used.
+- YADA implements internal marker gene selection - not all signature genes are used.
 
 ## Sample Notebooks
 - [Using reference matrix](Yada.ipynb)
 - [Using only marker list](Yada-only_markers.ipynb)
+- [YADA challenge result](/data/Challenge/challenge.ipynb)
