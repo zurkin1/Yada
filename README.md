@@ -45,5 +45,5 @@ By following these specifications, users can ensure their input data is properly
 
 ## Sample Notebooks
 - [Using reference matrix](Yada.ipynb)
-- [Using only marker list](Yada-only_markers.ipynb)
+- [Using marker list](Yada-only_markers.ipynb)
 - [YADA challenge result](/data/Challenge/challenge.ipynb)
