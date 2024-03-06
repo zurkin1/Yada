@@ -1,11 +1,11 @@
 # YADA Deconvolution Package
 ![Yada Flow](/data/Yada.jpg)
 
-YADA is a new biological deconvoltion algorithm that my partner and I developed as part of my PhD research in the Systems Biomedicine Lab under the supervision of Professor Efroni. It is designed to estimate the proportions of distinct cell types within complex, heterogeneous gene expression samples. 
+YADA is an innovative biological deconvolution algorithm developed by myself and my collaborator as part of my doctoral research in the Systems Biomedicine Lab under the supervision of Professor Efroni. Its purpose is to estimate the proportions of distinct cell types within complex, heterogeneous gene expression samples.
 
-The key premise behind YADA is that the transcriptomic signature of pure cell populations can be leveraged to deconvolute mixed profiles and quantify the relative abundance of each cell type. By analyzing gene expression patterns, deconvolution algorithms computationally unravel these complex cellular mixtures. 
+The fundamental premise behind YADA is that the transcriptomic signatures of pure cell populations can be leveraged to deconvolute mixed expression profiles and quantify the relative abundance of each constituent cell type. By analyzing gene expression patterns, deconvolution algorithms computationally unravel the complexities inherent to these cellular mixtures.
 
-YADA implements a robust approach to perform this deconvolution, accurately estimating immune and other cell type fractions from bulk transcriptomic data. It represents a novel contribution stemming from my doctoral studies focused on advancing computational methods for dissecting complex systems-level biomedical data. Under Professor Efroni's mentorship, we were able to design, validate and optimize YADA to address an important need in the field of computational immunology.
+YADA implements a robust approach to perform this deconvolution task, accurately estimating immune and other cell type fractions from bulk transcriptomic data. It represents a novel contribution stemming from my doctoral studies focused on advancing computational methods for dissecting intricate systems-level biomedical data. Under the guidance of Professor Efroni, we were able to design, validate, and optimize YADA to address a crucial need in the field of computational immunology.
 
 YADA implements two approaches:
 
@@ -26,16 +26,22 @@ In summary, YADA provides an accessible, high-speed Python toolkit for accurate 
 - Matrix decomposition https://en.wikipedia.org/wiki/Matrix_decomposition
 - Collection of papers https://github.com/changwn/Deconvolution_paper
 
-## Dataset For Training
-- Benchmark data sets are available in the data folder. This is the dataset I used for training to the DREAM challenge. It is collected from open datasets as well as some synthetic datasets that I have created.
+## Training Dataset
+- The training dataset for YADA comprises benchmark datasets available in the "data" folder. This comprehensive collection includes data from publicly available sources as well as synthetically generated datasets I created. These datasets were utilized for training and validation purposes during the DREAM challenge, a community-based deconvolution benchmarking effort.
 
-## Requirements on Input Files
-- pure.csv: A gene expression matrix for pure cell populations, with dimensions of (n genes) x (k cell types). For marker-based deconvolution, this file contains only gene symbols. Refer to the sample notebook for formatting details. 
-- mix.csv: A gene expression matrix for mixed cell samples, with dimensions of (n genes) x (m mixtures). Row 1 contains mixture labels. Additional input guidelines:
-- Gene symbols in column 1 of both files.
-- It is acceptable for some genes to be missing in either file. 
-- Data should be in non-log scale. If maximum expression value is <50, anti-log transform is applied. 
-- YADA implements internal marker gene selection - not all signature genes are used.
+## Input File Requirements
+- The input data for YADA consists of two files:
+    - pure.csv: A gene expression matrix for purified cell populations, with dimensions (n_genes) x (k_cell_types). For marker-based deconvolution, this file should contain only gene symbols. Refer to the sample notebook for formatting details.
+    - mix.csv: A gene expression matrix for mixed cell samples, with dimensions (n_genes) x (m_mixtures). The first row must contain mixture labels.
+    
+Additional guidelines for input files:
+
+- Gene symbols should be provided in the first column for both files.
+It is acceptable for some genes to be missing in either the pure or mixed file.
+- Expression data should be in non-log scale. If the maximum expression value is <50, an anti-log transformation is automatically applied.
+- YADA performs internal marker gene selection; therefore, not all provided signature genes may be utilized.
+
+By following these specifications, users can ensure their input data is properly formatted for YADA to perform accurate deconvolution.
 
 ## Sample Notebooks
 - [Using reference matrix](Yada.ipynb)
