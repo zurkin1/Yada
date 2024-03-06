@@ -113,12 +113,14 @@ def dtw_deconv(pure, mix, gene_list_df, metric='avg'):
     return estimate_wt
 
 
-def run_dtw_deconv_ensemble(pure, mix, gene_list_df):
+def run_dtw_deconv_ensemble(pure, mix, gene_list_df=None):
     num_loops = 400
     pool = mp.Pool()
     num_mixes = len(mix.columns)
     num_cells = len(pure.columns)
     ens_estimate_wt = np.zeros((num_cells, num_mixes))
+    if gene_list_df == None:
+        gene_list_df = pure
     
     results = [pool.apply_async(dtw_deconv, args=(pure, mix, gene_list_df)) for i in range(num_loops)]
     #results = [dtw_deconv(pure, mix, gene_list_df) for i in range(num_loops)]
