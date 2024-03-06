@@ -44,6 +44,6 @@ It is acceptable for some genes to be missing in either the pure or mixed file.
 By following these specifications, users can ensure their input data is properly formatted for YADA to perform accurate deconvolution.
 
 ## Sample Notebooks
-- [Using reference matrix](Yada.ipynb)
-- [Using marker list](Yada-only_markers.ipynb)
+- [Using reference matrix](/code/YADA-gene-diff.ipynb)
+- [Using marker list](/code/YADA.ipynb)
 - [YADA challenge result](/data/Challenge/challenge.ipynb)
