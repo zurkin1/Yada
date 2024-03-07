@@ -119,7 +119,7 @@ def run_dtw_deconv_ensemble(pure, mix, gene_list_df=None):
     num_mixes = len(mix.columns)
     num_cells = len(pure.columns)
     ens_estimate_wt = np.zeros((num_cells, num_mixes))
-    if gene_list_df == None:
+    if gene_list_df is None:
         gene_list_df = pure
     
     results = [pool.apply_async(dtw_deconv, args=(pure, mix, gene_list_df)) for i in range(num_loops)]
