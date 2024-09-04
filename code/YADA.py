@@ -113,7 +113,7 @@ def dtw_deconv(pure, mix, gene_list_df, metric='avg'):
     return estimate_wt
 
 
-def run_dtw_deconv_ensemble(pure, mix, gene_list_df=None):
+def run_yada(pure, mix, gene_list_df=None):
     num_loops = 400
     pool = mp.Pool()
     num_mixes = len(mix.columns)
@@ -213,7 +213,7 @@ def run_benchmark():
         pure, mix = preprocess(f'../data/{file}/pure.csv', f'../data/{file}/mix.csv')
         gene_list_df = gene_diff(pure, mix)
         logger.log(logging.DEBUG, file)
-        res = run_dtw_deconv_ensemble(pure, mix, gene_list_df)
+        res = run_yada(pure, mix, gene_list_df)
         file_res = pd.DataFrame(calc_corr(file, res))
         result = pd.concat([result, file_res])
     result.columns = ['dataset', 'celltype', 'pearson', 'spearman', 'p']
@@ -310,7 +310,7 @@ def run_simulator():
     #pure = pd.read_csv(FULL_PATH + 'sim/pure.csv', index_col=0)
     #mix = pd.read_csv(FULL_PATH + 'sim/mix.csv', index_col=0)
     #markers = pd.read_csv(FULL_PATH + 'sim/markers.csv', index_col=0)
-    result = run_dtw_deconv_ensemble(pure, mix, markers)
+    result = run_yada(pure, mix, markers)
     calc_corr('sim', result)
     
 
