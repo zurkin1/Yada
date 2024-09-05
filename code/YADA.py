@@ -101,6 +101,7 @@ def calc_corr(prop, ens_estimate_wt_2):
     return results
 
 def preprocess_files(pure, mix):
+    logging.info('Preprocessing files...')
     mix = pd.read_csv(mix, index_col=0)
     mix.index = mix.index.map(str.lower)
     mix.index = mix.index.map(str.strip)
@@ -115,8 +116,10 @@ def preprocess_files(pure, mix):
        pure[col] = [str.lower(word) if word is not np.nan else '' for word in pure[col]]
 
     #Standardize.
+    logging.info('Standardizing data...')
     mix = (mix-mix.min())/mix.mean() #mix.apply(lambda x: (x-x.mean())/(x.std()), axis=1) #+1e-16
 	
+    logging.info('Droping genes that are not shared by mix and pure...')
     pure_genes = set()
     for i in range(pure.values.shape[0]):
       pure_genes = pure_genes.union(set(pure.values[i]))
