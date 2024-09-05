@@ -13,3 +13,4 @@ code/env/*
 data/sim/assays.csv
 data/sim/results - Copy.csv
 data/sim/splater.csv
+.venv/
