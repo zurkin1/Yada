@@ -69,6 +69,11 @@ YADA is available under the MIT license. See the LICENSE file for more details.
 For questions, issues, or feature requests, please open an issue on our GitHub repository.
 For additional support, contact: zurkin at yahoo dot com.
 
+## Citation
+If you use YADA in your research, please cite our paper:
+Livne Dani, Snir Tom, Efroni Sol, YADA - Reference Free Deconvolution of RNA Sequencing Data, Current Bioinformatics; Volume 19, Issue , Year 2024, e050624230728.
+DOI: 10.2174/0115748936304034240405034414, https://www.eurekaselect.com/article/140845
+
 ## Acknowledgments
 We thank the scientific community for their valuable feedback and contributions to this project.
 
