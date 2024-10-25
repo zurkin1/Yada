@@ -57,8 +57,8 @@ result = run_yada(pure, mix)
 ```
 
 ## Sample Notebooks
-- [Using marker gene list](/code/YADA.ipynb)
-- [Using a complete reference matrix](/code/YADA-gene-diff.ipynb)
+- [Using marker gene list](/yada/YADA.ipynb)
+- [Using a complete reference matrix](/yada/YADA-gene-diff.ipynb)
 - [YADA challenge result](/data/Challenge/challenge.ipynb)
 
 ## Contributing
