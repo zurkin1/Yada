@@ -1,4 +1,4 @@
-
+.pypirc
 .vs/ProjectSettings.json
 *.json
 *.vsidx
@@ -14,3 +14,7 @@ data/sim/assays.csv
 data/sim/results - Copy.csv
 data/sim/splater.csv
 .venv/
+/build
+/dist
+/yada.egg-info
+/yada_deconv.egg-info
