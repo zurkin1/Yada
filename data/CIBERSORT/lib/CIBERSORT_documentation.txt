@@ -1,0 +1,65 @@
+=======================================================
+                   CIBERSORT v1.01
+    Cell-type Identification By Estimating Relative
+               Subsets Of RNA Transcripts
+
+            Newman et al., Nat Methods 2015
+                 doi:10.1038/nmeth.3337
+=======================================================
+
+>Instructions for setup:
+
+To run CIBERSORT software, please install relevant R libraries:
+
+    1) 	Install R packages from within R:
+    	install.packages('Rserve') 
+    	install.packages('e1071')  
+ 	install.packages('parallel')
+	install.packages('preprocessCore')
+    	install.packages('colorRamps')  
+
+    2) 	Start Rserve with option i or ii:
+ 
+	i) Within R console:
+	
+	library(Rserve)
+
+        	Rserve(args="--no-save")
+
+	ii) From Unix shell:
+		
+		R CMD $PATH/Rserve --no-save
+
+		where $PATH = location of Rserve executable
+
+    3)	Make sure the 'lib' folder is in the same directory as the CIBERSORT.jar file.
+
+    4) 	Run CIBERSORT using your own Mixture_File and Signature_Matrix, or use our example Mixture_File and Signature_Matrix [https://cibersort.stanford.edu/download.php].
+
+	Examples for building your own Signature_Matrix will be coming soon.
+
+    bash> java -Xmx3g -Xms3g -jar CIBERSORT.jar -M Mixture_File -B Signature_Matrix [Options]
+
+    5)	The column field in the CIBERSORT output refers to a particular mixture in the input. Mixtures in the input are indexed from left to right, starting with 0, 1, 2, ...  
+
+
+>Note:
+At least 3 parallel threads required for Unix systems (1 thread for Windows systems)
+At least 2GB RAM recommended, e.g. for 3GB:
+java -jar -Xmx3g -Xms3g -jar CIBERSORT.jar ...
+
+>Options:
+Argument   Description (details or default value)
+--------   --------------------------------------
+-M File    [Required] Mixture file (GEP matrix: row 1 = sample labels; column 1 = gene symbols; no missing values)
+-B File    Signature matrix file (Cell type GEP barcode matrix: row 1 = sample labels; column 1 = gene symbols; no missing values)
+           *This argument supersedes -P and -c (below) which collectively are used to build a signature matrix
+-P File    Purified sample file (Purified cell GEP matrix: row 1 = sample labels; column 1 = gene symbols; no missing values)
+-c File    Phenotype classes (Each row: phenotype label followed by 1 (class of interest), 2 (compare against), or 0 (ignore))
+-n Integer Set number of permutations for statistical analysis (100)
+-v         Enable verbose output for web version (% complete for permutations and CIBERSORT)
+-q [0-1]   Set q-value cutoff for differential expression analysis (0.3)
+-k Integer Set maximum condition number, or kappa, for signature matrix (999)
+-m Integer Set minimum number of DEGs to consider from each phenotype for signature matrix (50)
+-x Integer Set maximum number of DEGs to consider from each phenotype for signature matrix (150)
+-f         Filter non-hematopoietic genes from signature matrix during construction (False)
