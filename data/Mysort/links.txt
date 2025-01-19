@@ -1,2 +1,0 @@
-https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2069-6
-https://testtoolshed.g2.bx.psu.edu/repository?repository_id=6e9a9ab163e578e0&changeset_revision=e3afe097e80a

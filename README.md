@@ -60,6 +60,7 @@ result = run_yada(pure, mix)
 - [Using marker gene list](/yada/YADA.ipynb)
 - [Using a complete reference matrix](/yada/YADA-gene-diff.ipynb)
 - [YADA challenge result](/data/Challenge/challenge.ipynb)
+- [YADA simulation running](/data/sim/readme.md)
 
 ## Contributing
 We welcome contributions! Please see our Contributing Guidelines for more information on how to get involved.
