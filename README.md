@@ -1,5 +1,5 @@
 # YADA Deconvolution Package
-![Yada Flow](/data/Yada.jpg)
+![Yada Flow](data/Yada.jpg)
 
 ## Overview
 YADA is an innovative biological deconvolution algorithm developed by the author and a collaborator as part of doctoral research in the Systems Biomedicine Lab under the supervision of Professor Efroni. The purpose of YADA is to estimate the proportions of distinct cell types within complex, heterogeneous gene expression samples.
@@ -57,10 +57,10 @@ result = run_yada(pure, mix)
 ```
 
 ## Sample Notebooks
-- [Using marker gene list](/yada/YADA.ipynb)
-- [Using a complete reference matrix](/yada/YADA-gene-diff.ipynb)
-- [YADA challenge result](/data/Challenge/challenge.ipynb)
-- [YADA simulation running](/data/sim/readme.md)
+- [Using marker gene list](code/YADA.ipynb)
+- [Using a complete reference matrix](code/YADA-gene-diff.ipynb)
+- [YADA challenge result](data/Challenge/challenge.ipynb)
+- [YADA simulation running](data/sim/readme.md)
 
 ## Contributing
 We welcome contributions! Please see our Contributing Guidelines for more information on how to get involved.
@@ -78,7 +78,7 @@ Livne Dani, Snir Tom, Efroni Sol, YADA - Reference Free Deconvolution of RNA Seq
 DOI: 10.2174/0115748936304034240405034414, https://www.eurekaselect.com/article/140845
 
 ## Acknowledgments
-We thank the scientific community for their valuable feedback and contributions to this project.
+We thank the reviewers of this work for their valuable feedback and contributions.
 
 ## Resources
 - Matrix decomposition https://en.wikipedia.org/wiki/Matrix_decomposition
