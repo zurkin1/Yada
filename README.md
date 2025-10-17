@@ -23,9 +23,7 @@ The key features and innovations of YADA include:
 - User-friendly Python API: One of the few deconvolution libraries natively implemented in Python.
 
 ## Installation
-pip install yada_deconv
-or
-Clone this repository using the git clone command.
+Clone this repository using the `git clone` command.
 
 ## Training Dataset
 The training dataset for YADA comprises benchmark datasets available in the "data" folder. This comprehensive collection includes data from publicly available sources as well as synthetically generated datasets created by the authors. These datasets were utilized for training and validation purposes during the DREAM challenge, a community-based deconvolution benchmarking effort.
