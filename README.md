@@ -106,6 +106,5 @@ We thank the reviewers of this work for their valuable feedback and contribution
 - Computational Geometry in Python: From Theory to Application - [Toptal](https://www.toptal.com/python/computational-geometry-in-python-from-theory-to-implementation) 
 - Comparing normalization methods for Illumina RNA-Seq data - [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4625728/) 
 - Deconvolution Methods on RNA-Seq Data (Mixed cell types) - [Biostars Discussion](https://www.biostars.org/p/160961/#237546)
-
 - Matrix decomposition https://en.wikipedia.org/wiki/Matrix_decomposition
 - Collection of papers https://github.com/changwn/Deconvolution_paper
