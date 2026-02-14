@@ -79,5 +79,100 @@ DOI: 10.2174/0115748936304034240405034414, https://www.eurekaselect.com/article/
 We thank the reviewers of this work for their valuable feedback and contributions.
 
 ## Resources
+### Peer-Reviewed Articles & Preprints
+
+* 
+**Accurate estimation of cell-type composition from gene expression data** - [Nature Communications](https://www.nature.com/articles/s41467-019-10802-z) 
+
+
+* 
+**ADAPTS: Automated Deconvolution Augmentation of Profiles for Tissue Specific cells** - [bioRxiv](https://www.biorxiv.org/content/10.1101/633958v3.full) 
+
+
+* 
+**Automated identification of Cell Types in Single Cell RNA Sequencing** - [bioRxiv](https://www.biorxiv.org/content/10.1101/532093v1) 
+
+
+* 
+**CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples** - [PLOS Computational Biology](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007510) 
+
+
+* 
+**DAISM-DNN: Highly accurate cell type proportion estimation with deep neural networks** - [bioRxiv](https://www.biorxiv.org/content/10.1101/2020.03.26.009308v2.full) 
+
+
+* 
+**Deep-learning-based cell composition analysis from tissue expression profiles** - [bioRxiv](https://www.biorxiv.org/content/10.1101/659227v2.full) 
+
+
+* 
+**Gene expression inference with deep learning** - [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4908320/) / [PubMed](https://pubmed.ncbi.nlm.nih.gov/26873929/) 
+
+
+* 
+**Genetic Architect: Discovering Genomic Structure with Learned Neural Architectures** - [arXiv](https://arxiv.org/abs/1605.07156) 
+
+
+* 
+**GSVA: gene set variation analysis for microarray and RNA-Seq data** - [BMC Bioinformatics](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-7) 
+
+
+* 
+**HiG2Vec: hierarchical representations of Gene Ontology and genes in the Poincaré ball** - [Bioinformatics](https://academic.oup.com/bioinformatics/article/37/18/2971/6184857) 
+
+
+* 
+**Immune response in silico (IRIS): immune-specific genes identified from microarrays** - [Genes & Immunity](https://www.nature.com/articles/6364173) 
+
+
+* 
+**Insights from deconvolution of cell subtype proportions enhance interpretation** - [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6483354/) 
+
+
+* 
+**MGESP gene signature: A Computational Approach for Immunogenic Features** - [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6308325/) 
+
+
+* 
+**Profiling tumor infiltrating immune cells with CIBERSORT** - [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5895181/) 
+
+
+
+### Software, Documentation & Tools
+
+* 
+**Omnideconv** - [Official Website](https://omnideconv.org/) 
+
+
+* 
+**Analyzing RNA-seq data with DESeq2** - [Bioconductor Vignette](http://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html) 
+
+
+* 
+**edgeR: differential expression analysis of digital gene expression data** - [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2796818/) 
+
+
+* 
+**UNDO: Unsupervised deconvolution of mixed gene expression in tumor samples** - [Mendeley / Bioconductor](https://www.mendeley.com/catalogue/2678168f-9486-371e-b755-da240a398171/) 
+
+
+
+### Technical Tutorials & Discussions
+
+* 
+**Comparing Distance Measurements with Python and SciPy** - [KDnuggets](https://www.kdnuggets.com/2017/08/comparing-distance-measurements-python-scipy.html) 
+
+
+* 
+**Computational Geometry in Python: From Theory to Application** - [Toptal](https://www.toptal.com/python/computational-geometry-in-python-from-theory-to-implementation) 
+
+
+* 
+**Comparing normalization methods for Illumina RNA-Seq data** - [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4625728/) 
+
+
+* 
+**Deconvolution Methods on RNA-Seq Data (Mixed cell types)** - [Biostars Discussion](https://www.biostars.org/p/160961/#237546)
+
 - Matrix decomposition https://en.wikipedia.org/wiki/Matrix_decomposition
 - Collection of papers https://github.com/changwn/Deconvolution_paper
